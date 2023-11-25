@@ -1,13 +1,21 @@
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, ScrollView } from 'react-native';
 
-export default function Home({ navigation }) {
+function Home({ navigation }) {
+
     return (
-        <View>
-            <Text>I am a screen Home</Text>
-            <Button
-                title="Go to Game"
-                onPress={() => navigation.navigate('Game')}
-            />
-        </View>
+        // ThemeProvider로 theme 설정
+
+        <ScrollView>
+            <View>
+                <Text>I am a screen Home</Text>
+                <Button
+                    title="Go to Game"
+                    onPress={() => navigation.navigate('Game')}
+                />
+            </View>
+        </ScrollView>
+
     );
 }
+
+export default Home

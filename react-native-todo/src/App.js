@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { StatusBar, Dimensions } from 'react-native';
+// import { StatusBar, Dimensions } from 'react-native';
 import styled, { ThemeProvider } from 'styled-components/native';
 import { theme } from './theme';
-import Input from './components/Input';
-import Task from './components/Task';
-import AppLoading from 'expo-app-loading';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FlatList } from 'react-native-gesture-handler';
+// import Input from './components/Input';
+// import Task from './components/Task';
+// import AppLoading from 'expo-app-loading';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import ScreenHome from './ScreenHome';
-import ScreenGame from './ScreenGame';
+import Home from './components/screens/Home';
+import Game from './components/screens/Game';
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -24,7 +25,7 @@ const Title = styled.Text`
   align-self: flex-start;
   margin: 20px;
 `;
-const List = styled.ScrollView`
+const List = styled.FlatList`
   flex: 1;
   width: ${({ width }) => width - 40}px;
 `;
@@ -34,9 +35,9 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="ScreenA">
-        <Stack.Screen name="ScreenHome" component={ScreenHome} />
-        <Stack.Screen name="ScreenGame" component={ScreenGame} />
+      <Stack.Navigator initialRouteName="ScreenHome">
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Game" component={Game} />
       </Stack.Navigator>
     </NavigationContainer>
   );
