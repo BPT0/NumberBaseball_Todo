@@ -4,15 +4,14 @@ import { Dimensions, useWindowDimensions } from 'react-native';
 import PropTypes from 'prop-types';
 
 const StyledInput = styled.TextInput.attrs(({ theme }) => ({
-  placeholderTextColor: theme.main,
+  placeholderTextColor: theme.text,
 }))`
   width: ${({ width }) => width - 40}px;
+  flex:1;
   height: 60px;
-  margin: 3px 0;
-  padding: 15px 20px;
-  border-radius: 10px;
+  marginLeft: 10px;
   background-color: ${({ theme }) => theme.itemBackground};
-  font-size: 25px;
+  font-size: 20px;
   color: ${({ theme }) => theme.text};
 `;
 
@@ -22,6 +21,8 @@ const Input = ({
   onChangeText,
   onSubmitEditing,
   onBlur,
+  editable,
+  autoFocus
 }) => {
   const width = Dimensions.get('window').width;
   // const width = useWindowDimensions().width;
@@ -39,6 +40,8 @@ const Input = ({
       onChangeText={onChangeText}
       onSubmitEditing={onSubmitEditing}
       onBlur={onBlur}
+      editable={editable}
+      autoFocus={autoFocus}
     />
   );
 };
@@ -49,6 +52,7 @@ Input.propTypes = {
   onChangeText: PropTypes.func.isRequired,
   onSubmitEditing: PropTypes.func.isRequired,
   onBlur: PropTypes.func.isRequired,
+  editable: PropTypes.func.isRequired,
 };
 
 export default Input;

@@ -5,7 +5,6 @@ import styled, { ThemeProvider } from 'styled-components/native';
 import { theme } from '../../theme';
 
 const Container = styled.View`
-  flex : 1;
   flex-direction: row;
   align-items: center;
   background-color: ${({theme})=> theme.itemBackground};
