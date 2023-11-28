@@ -3,9 +3,7 @@ export const theme = {
   itemBackground: '#FFFFFF',
   text: '#cfcfcf',
   textBlack : '#252A31',
-  text_done: '#61DEA4',
-  text_error: '#F45E6D',
-  done: '#616161',
+  textDone: '#61DEA4',
+  textError: '#F45E6D',
   divisionLine: '#979797',
-  
 };

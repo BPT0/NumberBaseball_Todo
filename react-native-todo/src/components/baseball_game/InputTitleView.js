@@ -9,7 +9,7 @@ const Container = styled.View`
   justifyContent: space-between;
   background-color: ${({ theme }) => theme.itemBackground};
   padding: 5px;
-  borderBottomWidth: 1;
+  borderBottomWidth: 1px; 
   borderBottomColor: ${({theme})=> theme.divisionLine}
 `;
 
@@ -17,31 +17,52 @@ const Contents = styled.Text`
   flex: 1;
   text-align: center;
   font-size: 20px;
-  color: ${({ theme }) => (theme.textBlack)};
+  color: ${({ theme }) => theme.textBlack};
 `;
 
-const InputTitleView = ({ text }) => {
-  // textInput 상태 관리 변수
+const InputTitleView = ({ text, navigation, addItem, setInfo}) => {
+  // textInput editable 상태 관리 변수
   const [isEditable, setIsEditable] = useState(true);
+  // textInput의 입력값의 상태 관리 변수
+  const [inputText, setInputText] = useState('');
 
   const handleSubmitEditing = () => {
       setIsEditable(false);
+      navigation.setOptions({ title: inputText }); //  navigation의 title 설정
+      if(inputText){
+        addItem('suggestNum', '숫자 입력:'); // 새로운 아이템 생성
+        setInfo(prevInfo => {
+          // 이전 상태(prevInfo)를 기반으로 새로운 상태를 반환
+          return prevInfo.map(item => {
+            // 각 아이템의 title을 수정
+            return {
+              ...item, // 기존 아이템의 다른 속성들은 그대로 유지
+              title: {inputText} // 새로운 title 값으로 업데이트
+            };
+          });
+        });
+      }
   };
   
   return (
     <Container>
       <Contents>{text}</Contents>
-      <Input autoFocus={true}
+      <Input autoFocus={true} 
         placeholder='제목'
-        editable={isEditable} onSubmitEditing={handleSubmitEditing}
+        value={inputText}
+        maxLength={10}
+        editable={isEditable} 
+        onSubmitEditing={handleSubmitEditing}
+        onChangeText={setInputText}
       />
-
     </Container>
   );
 };
 
 InputTitleView.propTypes = {
-  text: PropTypes.object.isRequired,
+  text: PropTypes.string.isRequired,
+  navigation: PropTypes.object.isRequired,
+  addItem: PropTypes.func.isRequired,
 };
 
 export default InputTitleView;

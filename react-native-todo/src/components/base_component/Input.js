@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import { Dimensions, useWindowDimensions } from 'react-native';
+import { Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
 
 const StyledInput = styled.TextInput.attrs(({ theme }) => ({
@@ -12,15 +12,15 @@ const StyledInput = styled.TextInput.attrs(({ theme }) => ({
   marginLeft: 10px;
   background-color: ${({ theme }) => theme.itemBackground};
   font-size: 20px;
-  color: ${({ theme }) => theme.text};
+  color: ${({ theme }) => theme.textBlack};
 `;
 
 const Input = ({
-  placeholder,
   value,
   onChangeText,
-  onSubmitEditing,
   onBlur,
+  placeholder,
+  onSubmitEditing,
   editable,
   autoFocus
 }) => {
@@ -31,11 +31,10 @@ const Input = ({
     <StyledInput
       width={width}
       placeholder={placeholder}
-      maxLength={50}
+      maxLength={10}
       autoCapitalize="none"
       autoCorrect={false}
       returnKeyType="done"
-      keyboardAppearance="dark" // iOS only
       value={value}
       onChangeText={onChangeText}
       onSubmitEditing={onSubmitEditing}
@@ -48,11 +47,11 @@ const Input = ({
 
 Input.propTypes = {
   placeholder: PropTypes.string,
-  value: PropTypes.string.isRequired,
   onChangeText: PropTypes.func.isRequired,
   onSubmitEditing: PropTypes.func.isRequired,
-  onBlur: PropTypes.func.isRequired,
-  editable: PropTypes.func.isRequired,
+  onChangeText: PropTypes.func,
+  onBlur: PropTypes.bool,
+  editable: PropTypes.bool.isRequired,
 };
 
 export default Input;

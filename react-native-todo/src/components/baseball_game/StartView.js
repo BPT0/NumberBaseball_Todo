@@ -1,22 +1,21 @@
 import React from 'react';
 import {View} from 'react-native';
 import PropTypes from 'prop-types';
-import styled, { ThemeProvider } from 'styled-components/native';
-import { theme } from '../../theme';
+import styled from 'styled-components/native';
 
 const Container = styled.View`
   flex-direction: row;
   align-items: center;
   background-color: ${({theme})=> theme.itemBackground};
   padding: 5px;
-  borderBottomWidth: 1;
+  borderBottomWidth: 1px;
   borderBottomColor: ${({theme})=> theme.divisionLine}
 `;
 
 const Contents = styled.Text`
   flex: 1;
   font-size: 20px;
-  color: ${(theme) =>  theme.done };
+  color: ${({theme})=> theme.textBlack};
 `;
 
 // 기능 텍스트를 뷰에 보여주기
