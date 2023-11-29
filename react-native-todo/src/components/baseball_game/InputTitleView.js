@@ -30,7 +30,7 @@ const InputTitleView = ({ text, navigation, addItem, setInfo}) => {
       setIsEditable(false);
       navigation.setOptions({ title: inputText }); //  navigation의 title 설정
       if(inputText){
-        addItem('suggestNum', '숫자 입력:'); // 새로운 아이템 생성
+        addItem('suggestNum', '숫자 입력:'); // 새로운 아이템 뷰 생성
         setInfo(prevInfo => {
           // 이전 상태(prevInfo)를 기반으로 새로운 상태를 반환
           return prevInfo.map(item => {
@@ -63,6 +63,7 @@ InputTitleView.propTypes = {
   text: PropTypes.string.isRequired,
   navigation: PropTypes.object.isRequired,
   addItem: PropTypes.func.isRequired,
+  setInfo: PropTypes.func.isRequired,
 };
 
 export default InputTitleView;

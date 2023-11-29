@@ -15,17 +15,17 @@ const Container = styled.View`
 const Contents = styled.Text`
     flex: 1;
     font-size: 20px;
-    color: ${({ theme }) => theme.textError};
+    color: ${({ theme }) => theme.textDone};
 `;
 
 // 기능 텍스트를 뷰에 보여주기
-const ErrorView = ({ text, addItem }) => {
+const GoGameControlView = ({ text, addItem }) => {
     useEffect(()=>{
         handleAddItem();
     }, []);
 
     const handleAddItem = () => {
-        addItem('suggestNum', '숫자 입력:');
+        addItem('gameControl', '게임 재시작시 1, \n게임 종료시 2를 입력하세요',);    
     };
 
     return (
@@ -37,8 +37,9 @@ const ErrorView = ({ text, addItem }) => {
     );
 };
 
-ErrorView.propTypes = {
+GoGameControlView.propTypes = {
     text: PropTypes.string.isRequired,
+    addItem: PropTypes.func.isRequired,
 };
 
-export default ErrorView;
+export default GoGameControlView;
