@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import PropTypes from 'prop-types';
 import IconButton from './IconButton';
 import { images } from '../images';
-import Input from './Input';
+import Input from './base_component/Input';
 
 const Container = styled.View`
   flex-direction: row;
