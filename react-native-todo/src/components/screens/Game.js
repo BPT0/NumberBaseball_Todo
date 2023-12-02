@@ -5,7 +5,6 @@ import StartView from '../baseball_game/StartView';
 import styled, { ThemeProvider } from 'styled-components/native';
 import 'react-native-get-random-values';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import uuid from "uuid";
 // local import
 import { theme } from '../../theme';
 import InputTitleView from '../baseball_game/InputTitleView';
@@ -25,8 +24,6 @@ const Container = styled.SafeAreaView`
     justify-content: center;
 `;
 
-// crypto.getRandomValues(): 웹 플랫폼에서 암호화적으로 
-// 강력한 랜덤 값을 생성하는 데 사용되는 메소드
 // func: 숫자야구에서 처음에 setting 할 3자리 수를 생성함
 function getRandomNumber() {
     const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -42,8 +39,6 @@ function getRandomNumber() {
 
     return first * 100 + second * 10 + third;
 }
-
-
 
 function Game({ navigation }) {
     const width = Dimensions.get('window').width;
@@ -77,6 +72,7 @@ function Game({ navigation }) {
         id++;
     }
 
+    // listItem-resultView 를 추가하는 함수
     const addItemResult = (type, isNothing, ball, strike) => {
         const newItem = {id: id.toString(), type: type, isNothing: isNothing, ball: ball, strike: strike};
         setListItem([...listItem, newItem]);

@@ -2,13 +2,13 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import PropTypes from 'prop-types';
-import { images } from '../images';
+import { images } from '../images/images';
 
+
+//tint-color: ${({ theme, completed }) => completed ? theme.done : theme.text};
 const Icon = styled.Image`
-  tint-color: ${({ theme, completed }) =>
-    completed ? theme.done : theme.text};
-  width: 30px;
-  height: 30px;
+  width: 27px;
+  height: 27px;
   margin: 10px;
 `;
 

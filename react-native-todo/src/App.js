@@ -1,7 +1,7 @@
 import React  from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Home from './components/screens/Home';
+import Home from './components/screens/HomeTodo';
 import Game from './components/screens/Game';
 
 export default function App() {
