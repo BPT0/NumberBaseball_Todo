@@ -150,7 +150,7 @@ export default function HomeTodo({navigation}) {
             Category
           </CategoryText>
             <CategoryBox bgColor="#EBEFF5">
-            <TouchableOpacity onPress={() => console.log('카테고리 선택됨')}>
+            <TouchableOpacity onPress={() => console.log('카테고리 1선택됨')}>
             <CategoryText>Not Solved</CategoryText>
               <CategoryText
                 textColor="#252A31"
@@ -163,7 +163,7 @@ export default function HomeTodo({navigation}) {
             </TouchableOpacity>
             </CategoryBox>
           <CategoryBox bgColor="#61DEA4">
-          <TouchableOpacity onPress={() => console.log('카테고리 선택됨')}>
+          <TouchableOpacity onPress={() => console.log('카테고리 2선택됨')}>
           <CategoryText textColor="#fff">Solved</CategoryText>
             <CategoryText
               textColor="#fff"
@@ -176,7 +176,7 @@ export default function HomeTodo({navigation}) {
           </TouchableOpacity>
           </CategoryBox>
           <CategoryBox bgColor="#F45E6D">
-          <TouchableOpacity onPress={() => console.log('카테고리 선택됨')}>
+          <TouchableOpacity onPress={() => console.log('카테고리 3선택됨')}>
           <CategoryText textColor="#fff">Don’t want Game</CategoryText>
             <CategoryText
               textColor="#fff"
