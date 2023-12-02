@@ -65,7 +65,7 @@ const List = styled.ScrollView`
   width: ${({ width }) => width - 40}px;
 `;
 
-export default function App() {
+export default function HomeTodo({navigation}) {
   const width = Dimensions.get('window').width;
 
   const [isReady, setIsReady] = useState(false);
@@ -112,9 +112,14 @@ export default function App() {
   const _handleTextChange = text => {
     setNewTask(text);
   };
+
   const _onBlur = () => {
     setNewTask('');
   };
+
+  const _goGameScreen = () => {
+
+  }
 
   return isReady ? (
     <ThemeProvider theme={theme}>
@@ -194,7 +199,8 @@ export default function App() {
               />
             ))}
         </List>
-        <FloatButton onPress={() => console.log('버튼 클릭')} />
+        {/* todo. onPress 시 Game 화면으로 넘어가는 함수 작성 */}
+        <FloatButton onPress={() => navigation.navigate('Game')} />
       </Container>
     </ThemeProvider>
   ) : (
