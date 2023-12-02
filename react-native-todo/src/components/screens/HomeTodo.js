@@ -15,7 +15,7 @@ import FloatButton from '../todo/component/FloatButton';
 
 const Container = styled.SafeAreaView`
   flex: 1;
-  background-color: ${({ theme }) => theme.background};
+  background-color: #fff;
   align-items: center;
   justify-content: flex-start;
 `;
@@ -149,9 +149,9 @@ export default function HomeTodo({navigation}) {
           >
             Category
           </CategoryText>
-          <TouchableOpacity onPress={() => console.log('카테고리 선택됨')}>
             <CategoryBox bgColor="#EBEFF5">
-              <CategoryText>Not Solved</CategoryText>
+            <TouchableOpacity onPress={() => console.log('카테고리 선택됨')}>
+            <CategoryText>Not Solved</CategoryText>
               <CategoryText
                 textColor="#252A31"
                 size="14px;"
@@ -160,10 +160,11 @@ export default function HomeTodo({navigation}) {
               >
                 0 task
               </CategoryText>
+            </TouchableOpacity>
             </CategoryBox>
-          </TouchableOpacity>
           <CategoryBox bgColor="#61DEA4">
-            <CategoryText textColor="#fff">Solved</CategoryText>
+          <TouchableOpacity onPress={() => console.log('카테고리 선택됨')}>
+          <CategoryText textColor="#fff">Solved</CategoryText>
             <CategoryText
               textColor="#fff"
               size="14px;"
@@ -172,9 +173,11 @@ export default function HomeTodo({navigation}) {
             >
               2 task
             </CategoryText>
+          </TouchableOpacity>
           </CategoryBox>
           <CategoryBox bgColor="#F45E6D">
-            <CategoryText textColor="#fff">Don’t want Game</CategoryText>
+          <TouchableOpacity onPress={() => console.log('카테고리 선택됨')}>
+          <CategoryText textColor="#fff">Don’t want Game</CategoryText>
             <CategoryText
               textColor="#fff"
               size="14px;"
@@ -182,7 +185,8 @@ export default function HomeTodo({navigation}) {
               weight="400"
             >
               3 task
-            </CategoryText>
+            </CategoryText>          
+          </TouchableOpacity>
           </CategoryBox>
         </CategoryArea>
 
