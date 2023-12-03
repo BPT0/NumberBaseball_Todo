@@ -22,6 +22,27 @@ const Contents = styled.Text`
     completed ? 'line-through' : 'none'};
 `;
 
+const getStatusColor = (status) => {
+  switch (status) {
+    case 'Not Solved':
+      return '#979797';
+    case 'Solved':
+      return '#61DEA4';
+    case 'Dont want':
+      return '#F45E6D';
+    default:
+      return '#61DEA4';
+  }
+};
+
+const StatusIcon = styled.View`
+  width: 13px;
+  height: 13px;
+  border-radius: 15px;
+  background-color: ${({ status }) => getStatusColor(status)};
+`;
+
+
 const Task = ({ item, deleteTask, toggleTask, updateTask }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(item.text);
@@ -59,7 +80,7 @@ const Task = ({ item, deleteTask, toggleTask, updateTask }) => {
         completed={item.completed}
       />
       <Contents completed={item.completed}>{item.text}</Contents>
-      {item.completed || (
+      {/* {item.completed || (
         <IconButton
           type={images.update}
           onPressOut={_handleUpdateButtonPress}
@@ -70,7 +91,9 @@ const Task = ({ item, deleteTask, toggleTask, updateTask }) => {
         id={item.id}
         onPressOut={deleteTask}
         completed={item.completed}
-      />
+      /> */}
+      <StatusIcon status={item.status} />
+  
     </Container>
   );
 };
