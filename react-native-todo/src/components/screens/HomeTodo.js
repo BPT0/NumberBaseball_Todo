@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StatusBar,
   Dimensions,
@@ -85,8 +85,12 @@ export default function HomeTodo({navigation}) {
     setTasks(JSON.parse(loadedTasks || '{}'));
   };
 
-  const _addTask = () => {
+  const _addTask = (gameData) => {
     const ID = Date.now().toString();
+    // 3.task에 위 항목들 표시
+    // todo. newtask를 gameData에 title로 변경
+    // todo. 나머지 gameData 전달
+    // todo. loadTask 함수도 같이 확인해보며 수정
     const newTaskObject = {
       [ID]: { id: ID, text: newTask, completed: false },
     };
@@ -121,6 +125,27 @@ export default function HomeTodo({navigation}) {
 
   }
 
+// async 스토리지 전체 데이터 삭제 함수
+const clearAllData = async () => {
+  try {
+    await AsyncStorage.clear();
+    console.log('모든 데이터가 삭제되었습니다.');
+  } catch (error) {
+    console.error('데이터 삭제 오류:', error);
+  }
+};
+
+
+const gameData = navigation.params;
+useEffect(()=>{
+  if(gameData!= null){
+    console.log(gameData.toString())
+    // todo. 1.게임화면에서 2번을 누르고 정답을 맞추고 종료되어 홈화면으로 왔을때
+    // todo. 2.addTask 에 상태값과 제목값, randomNumber를 전달
+    _addTask(gameData);
+  }
+}, []);
+
   return isReady ? (
     <ThemeProvider theme={theme}>
       <Container>
@@ -134,9 +159,9 @@ export default function HomeTodo({navigation}) {
             placeholder="+"
             value={newTask}
             onChangeText={_handleTextChange}
-            onSubmitEditing={_addTask}
             onBlur={_onBlur}
           />
+          {/* onSubmitEditing={_addTask} */}
           <Title>Play NumberbaseBall~!</Title>
         </Header>
         <CategoryArea>
@@ -203,7 +228,6 @@ export default function HomeTodo({navigation}) {
               />
             ))}
         </List>
-        {/* todo. onPress 시 Game 화면으로 넘어가는 함수 작성 */}
         <FloatButton onPress={() => navigation.navigate('Game')} />
       </Container>
     </ThemeProvider>

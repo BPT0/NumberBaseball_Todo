@@ -35,7 +35,7 @@ function getRandomNumber() {
     return first * 100 + second * 10 + third;
 }
 
-const GameControlView = ({ text, addItem, setInfo, }) => {
+const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
     // textInput editable 상태 관리 변수
     const [isEditable, setIsEditable] = useState(true);
     // textInput의 입력값의 상태 관리 변수
@@ -45,6 +45,16 @@ const GameControlView = ({ text, addItem, setInfo, }) => {
         const numericValue = text.replace(/[^12]/g, ''); // 1,2외의 숫자의 값은 제거
         const truncatedValue = numericValue.slice(0, 3); // 최대 3자리까지 자름
         setInputNum(truncatedValue); // 입력값 업데이트
+    };
+
+    const getType = (value) => {
+        return typeof value;
+      };
+
+    const goToHomeTodo = (info) => {
+        console.log(getType(info));
+        navigation.navigate('Home', info[0] );
+        // object로 전달됨
     };
 
     const handleSubmitEditing = () => {
@@ -62,7 +72,12 @@ const GameControlView = ({ text, addItem, setInfo, }) => {
                 });
                 addItem('suggestNum', '숫자입력:');
             } else {
+                goToHomeTodo(info);
 
+                // todo. Hometodo 화면에 info[0] 의 정보를 추가하여 task를 추가한다.
+                // todo. task를 누르게 되면 저장된 info[0] 정보를 토대로한 게임 화면을 보여준다.
+                // todo. +task(todo항목)가 체크 부분을 제외한 전체가 버튼 이벤트가 발생되게 수정
+                // todo. +task 화면에서 이동했을때 게임 표시창 디자인
             }
         }
     };

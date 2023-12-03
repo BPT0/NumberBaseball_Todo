@@ -79,7 +79,17 @@ const Task = ({ item, deleteTask, toggleTask, updateTask }) => {
         onPressOut={toggleTask}
         completed={item.completed}
       />
-      <Contents completed={item.completed}>{item.text}</Contents>
+
+      // todo. 1.task버튼 이벤트 구현하게 수정
+      // todo. 2.누를때 전달된 게임화면에서 가져온 데이터가 확인되는지 체크 및 표시
+      // todo. 3. 데이터와 todo의 id(식별값)를 가지고 게임화면으로 이동
+      
+      <Contents 
+          completed={item.completed}
+      >
+        {item.text}
+      
+      </Contents>
       {/* {item.completed || (
         <IconButton
           type={images.update}

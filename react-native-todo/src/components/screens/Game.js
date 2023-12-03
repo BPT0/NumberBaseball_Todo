@@ -120,6 +120,8 @@ function Game({ navigation }) {
                     text={item.text}
                     addItem={addItem}
                     setInfo={setInfo}
+                    info={info}
+                    navigation={navigation}
                     />
             default:
                 return null;
