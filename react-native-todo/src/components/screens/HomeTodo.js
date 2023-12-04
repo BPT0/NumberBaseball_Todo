@@ -185,6 +185,8 @@ const clearAllData = async () => {
 };
 
 
+
+
 // const gameData = navigation.params;
 // useEffect(()=>{
 //   if(gameData!= null){

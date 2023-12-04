@@ -1,5 +1,5 @@
 // global import
-import { Dimensions}  from 'react-native';
+import { Dimensions, BackHandler }  from 'react-native';
 import React, { useEffect, useState} from 'react';
 import StartView from '../baseball_game/StartView';
 import styled, { ThemeProvider } from 'styled-components/native';
@@ -127,7 +127,31 @@ function Game({ navigation }) {
                 return null;
         }
     }
-
+    
+    const goToHomeTodo = (gameData) => {
+        console.log('Sending game data to HomeTodo:', gameData);
+        navigation.navigate('Home', { gameData });
+        };
+          
+    useEffect(() => {
+        const backAction = () => {
+            console.log('Back button pressed');
+            const gameData = {
+            title: info[0].title, // 또는 사용자가 입력한 제목
+            completed: false,
+            };
+            goToHomeTodo(gameData);
+            return true; // 이벤트를 여기서 종료
+        };
+    
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+        }, []);
+    
     return (
         <ThemeProvider theme={theme}>
             <Container>
