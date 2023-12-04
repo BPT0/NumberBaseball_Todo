@@ -104,7 +104,7 @@ export default function HomeTodo({navigation, route}) {
     const newTaskObject = {
       [ID]: { 
         id: ID, 
-        text: gameData.title.inputText,   // 예: 게임 제목 또는 설명
+        text: gameData.title,   // 예: 게임 제목 또는 설명
         completed: gameData.completed,  // 예: 게임 완료 상태
         // 필요한 경우 다른 gameData 속성 추가
       },
