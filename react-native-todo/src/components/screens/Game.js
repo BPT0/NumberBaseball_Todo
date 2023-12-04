@@ -133,24 +133,25 @@ function Game({ navigation }) {
         navigation.navigate('Home', { gameData });
         };
           
-    useEffect(() => {
-        const backAction = () => {
-            console.log('Back button pressed');
-            const gameData = {
-            title: info[0].title, // 또는 사용자가 입력한 제목
-            completed: false,
+        useEffect(() => {
+            const backAction = () => {
+                console.log('Back button pressed');
+                const gameData = {
+                    title: info[0].title, // 상태에서 제목 가져오기
+                    completed: false,
+                };
+                goToHomeTodo(gameData);
+                return true; // 이벤트를 여기서 종료
             };
-            goToHomeTodo(gameData);
-            return true; // 이벤트를 여기서 종료
-        };
-    
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-        }, []);
+        
+            const backHandler = BackHandler.addEventListener(
+                'hardwareBackPress',
+                backAction
+            );
+        
+            return () => backHandler.remove();
+        }, [info]); // 의존성 배열에 info 추가
+        
     
     return (
         <ThemeProvider theme={theme}>
