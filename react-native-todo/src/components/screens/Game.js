@@ -89,6 +89,11 @@ function Game({ navigation }) {
         }
     }, [info]);
 
+    const goToHomeTodo = (gameData) => {
+        console.log('Sending game data to HomeTodo:', gameData);
+        navigation.navigate('Home', { gameData });
+    };
+
     // listItem을 rendering 하는 함수
     const renderItem = ({ item }) => {
         switch(item.type){
@@ -131,17 +136,13 @@ function Game({ navigation }) {
                     text={item.text}
                     addItem={addItem}
                     setInfo={setInfo}
+                    info={info[0]}
                     navigation={navigation}
                     />
             default:
                 return null;
         }
     }
-    
-    const goToHomeTodo = (gameData) => {
-        console.log('Sending game data to HomeTodo:', gameData);
-        navigation.navigate('Home', { gameData });
-    };
     
     return (
         <ThemeProvider theme={theme}>

@@ -99,9 +99,8 @@ export default function HomeTodo({navigation, route}) {
         },
       };
       _saveTasks({ ...tasks, ...newTaskObject });
-      console.log({ ...tasks, ...newTaskObject });
+      console.log(newTaskObject);
     } else {
-      console.log(gameData);
       console.log('gameData is undefined or empty');
     }
   };
@@ -148,7 +147,7 @@ const loadStoredData = async () => {
   try {
     const storedData = await AsyncStorage.getItem('tasks');
     if (storedData !== null) {
-      console.log(JSON.parse(storedData));
+      // console.log(JSON.parse(storedData));
     } else {
       console.log('No data found');
     }

@@ -35,7 +35,7 @@ function getRandomNumber() {
     return first * 100 + second * 10 + third;
 }
 
-const GameControlView = ({ text, addItem, setInfo, navigation}) => {
+const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
     // textInput editable 상태 관리 변수
     const [isEditable, setIsEditable] = useState(true);
     // textInput의 입력값의 상태 관리 변수
@@ -49,18 +49,12 @@ const GameControlView = ({ text, addItem, setInfo, navigation}) => {
 
     const getType = (value) => {
         return typeof value;
-      };
+    };
 
     const goToHomeTodo = (gameData) => {
-    console.log('Sending game data to HomeTodo:', gameData);
-    navigation.navigate('Home', { gameData });
+        console.log('Sending game data to HomeTodo:', gameData);
+        navigation.navigate('Home', { gameData });
     };
-      
-    // const goToHomeTodo = (info) => {
-    //     console.log(getType(info));
-    //     navigation.navigate('Home', info[0] );
-    //     // object로 전달됨
-    // };
 
     const handleSubmitEditing = () => {
         if (inputNum) {
@@ -70,15 +64,16 @@ const GameControlView = ({ text, addItem, setInfo, navigation}) => {
                 setInfo(prevInfo => {
                     return prevInfo.map(item => {
                         return {
-                            title: prevInfo.title, 
-                            state: 'notDone', 
+                            title: prevInfo.title,
+                            state: 'notDone',
                             randomNumber: getRandomNumber().toString(),
                         };
                     });
                 });
                 addItem('suggestNum', '숫자입력:');
             } else if (inputNum == '2') {
-                goToHomeTodo(info[0]);
+                console.log(info);
+                goToHomeTodo(info);
             }
         }
     };
