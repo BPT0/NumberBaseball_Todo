@@ -51,11 +51,16 @@ const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
         return typeof value;
       };
 
-    const goToHomeTodo = (info) => {
-        console.log(getType(info));
-        navigation.navigate('Home', info[0] );
-        // object로 전달됨
+    const goToHomeTodo = (gameData) => {
+    console.log('Sending game data to HomeTodo:', gameData);
+    navigation.navigate('Home', { gameData });
     };
+      
+    // const goToHomeTodo = (info) => {
+    //     console.log(getType(info));
+    //     navigation.navigate('Home', info[0] );
+    //     // object로 전달됨
+    // };
 
     const handleSubmitEditing = () => {
         if (inputNum) {
@@ -72,12 +77,13 @@ const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
                 });
                 addItem('suggestNum', '숫자입력:');
             } else {
-                goToHomeTodo(info);
-
-                // todo. Hometodo 화면에 info[0] 의 정보를 추가하여 task를 추가한다.
-                // todo. task를 누르게 되면 저장된 info[0] 정보를 토대로한 게임 화면을 보여준다.
-                // todo. +task(todo항목)가 체크 부분을 제외한 전체가 버튼 이벤트가 발생되게 수정
-                // todo. +task 화면에서 이동했을때 게임 표시창 디자인
+                //goToHomeTodo(info);
+                const gameData = {
+                    title: info[0].title, // 예: 게임 타이틀
+                    completed: true, // 또는 다른 완료 여부를 표시하는 로직
+                    // 필요한 경우 다른 정보 추가
+                };
+                goToHomeTodo(gameData);
             }
         }
     };
