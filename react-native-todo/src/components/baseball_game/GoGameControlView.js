@@ -19,7 +19,7 @@ const Contents = styled.Text`
 `;
 
 // 기능 텍스트를 뷰에 보여주기
-const GoGameControlView = ({ text, addItem,}) => {
+const GoGameControlView = ({ text, addItem }) => {
     useEffect(()=>{
         handleAddItem();
     }, []);

@@ -49,6 +49,13 @@ function Game({ navigation }) {
         {title: 'noneTitle', state: 'notDone', randomNumber: randomNumber.toString(),}
     ])
 
+    // 게임 시작시 처음에 임시로 제목을 지정하는 useEffect()  
+    useEffect(() => {
+        navigation.setOptions({
+            title: '새로운 게임',
+        });
+    }, []);
+    
     // listItem을 정하는 useState
     const [listItem, setListItem] = useState([
         {id: '1', type: 'infoText', text: '숫자 야구 게임을 시작합니다~!'},
@@ -72,23 +79,6 @@ function Game({ navigation }) {
         id++;
     }
 
-    useEffect(() => {
-        if (info[0].title != "nonetitle") {
-            const backAction = () => {
-                console.log('Back button pressed');
-                goToHomeTodo(info[0]);
-                return true; // 이벤트를 여기서 종료
-            };
-
-            const backHandler = BackHandler.addEventListener(
-                'hardwareBackPress',
-                backAction
-            );
-
-            return () => backHandler.remove();
-        }
-    }, [info]);
-
     // listItem을 rendering 하는 함수
     const renderItem = ({ item }) => {
         switch(item.type){
@@ -100,7 +90,6 @@ function Game({ navigation }) {
                     navigation={navigation}
                     addItem={addItem}
                     setInfo={setInfo}
-                    info={info}
                     />
             case 'suggestNum':
                 return <SuggestNumView
@@ -123,14 +112,15 @@ function Game({ navigation }) {
                     />
             case 'goGameControl':
                 return <GoGameControlView
-                        text={item.text}
-                        addItem={addItem}
+                    text={item.text}
+                    addItem={addItem}
                     />
             case 'gameControl':
                 return <GameControlView
                     text={item.text}
                     addItem={addItem}
                     setInfo={setInfo}
+                    info={info}
                     navigation={navigation}
                     />
             default:
@@ -141,7 +131,26 @@ function Game({ navigation }) {
     const goToHomeTodo = (gameData) => {
         console.log('Sending game data to HomeTodo:', gameData);
         navigation.navigate('Home', { gameData });
-    };
+        };
+          
+    useEffect(() => {
+        const backAction = () => {
+            console.log('Back button pressed');
+            const gameData = {
+            title: info[0].title, // 또는 사용자가 입력한 제목
+            completed: false,
+            };
+            goToHomeTodo(gameData);
+            return true; // 이벤트를 여기서 종료
+        };
+    
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+        }, []);
     
     return (
         <ThemeProvider theme={theme}>
