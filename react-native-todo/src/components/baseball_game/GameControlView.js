@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components/native';
 import PropTypes from 'prop-types';
 import Input from '../base_component/Input';
@@ -49,35 +49,31 @@ const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
 
     const getType = (value) => {
         return typeof value;
-      };
+    };
 
-    const goToHomeTodo = (info) => {
-        console.log(getType(info));
-        navigation.navigate('Home', info[0] );
-        // object로 전달됨
+    const goToHomeTodo = (gameData) => {
+        console.log('Sending game data to HomeTodo:', gameData);
+        navigation.navigate('Home', { gameData });
     };
 
     const handleSubmitEditing = () => {
         if (inputNum) {
             setIsEditable(false);
             if (inputNum == '1') {
+                // 게임 재시작 기능 구현
                 setInfo(prevInfo => {
                     return prevInfo.map(item => {
                         return {
-                            ...item, 
-                            state: 'notDone', 
+                            title: prevInfo.title,
+                            state: 'notDone',
                             randomNumber: getRandomNumber().toString(),
                         };
                     });
                 });
                 addItem('suggestNum', '숫자입력:');
-            } else {
+            } else if (inputNum == '2') {
+                console.log(info);
                 goToHomeTodo(info);
-
-                // todo. Hometodo 화면에 info[0] 의 정보를 추가하여 task를 추가한다.
-                // todo. task를 누르게 되면 저장된 info[0] 정보를 토대로한 게임 화면을 보여준다.
-                // todo. +task(todo항목)가 체크 부분을 제외한 전체가 버튼 이벤트가 발생되게 수정
-                // todo. +task 화면에서 이동했을때 게임 표시창 디자인
             }
         }
     };

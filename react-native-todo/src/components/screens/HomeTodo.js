@@ -13,6 +13,8 @@ import AppLoading from 'expo-app-loading';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatButton from '../todo/component/FloatButton';
 
+import { Button } from 'react-native'; // 스토리지 체크용 Button 컴포넌트 추가
+
 const Container = styled.SafeAreaView`
   flex: 1;
   background-color: #fff;
@@ -65,7 +67,7 @@ const List = styled.ScrollView`
   width: ${({ width }) => width - 40}px;
 `;
 
-export default function HomeTodo({navigation}) {
+export default function HomeTodo({navigation, route}) {
   const width = Dimensions.get('window').width;
 
   const [isReady, setIsReady] = useState(false);
@@ -86,17 +88,32 @@ export default function HomeTodo({navigation}) {
   };
 
   const _addTask = (gameData) => {
-    const ID = Date.now().toString();
-    // 3.task에 위 항목들 표시
-    // todo. newtask를 gameData에 title로 변경
-    // todo. 나머지 gameData 전달
-    // todo. loadTask 함수도 같이 확인해보며 수정
-    const newTaskObject = {
-      [ID]: { id: ID, text: newTask, completed: false },
-    };
-    setNewTask('');
-    _saveTasks({ ...tasks, ...newTaskObject });
+    if(gameData && Object.keys(gameData).length > 0) {  // gameData가 존재하고, 객체의 속성 개수가 0보다 큰지 확인
+      const ID = Date.now().toString();
+      const newTaskObject = {
+        [ID]: { 
+          id: ID, 
+          text: gameData.title,   // 예: 게임 제목 또는 설명
+          completed: gameData.state,  // 예: 게임 완료 상태
+          // 필요한 경우 다른 gameData 속성 추가
+        },
+      };
+      _saveTasks({ ...tasks, ...newTaskObject });
+      console.log(newTaskObject);
+    } else {
+      console.log('gameData is undefined or empty');
+    }
   };
+  
+  useEffect(() => {
+    const gameData = route.params?.gameData;
+    
+    if (gameData) {
+      console.log('Received game data:', gameData);
+      _addTask(gameData);
+    }
+  }, [route.params]);
+
   const _deleteTask = id => {
     const currentTasks = Object.assign({}, tasks);
     delete currentTasks[id];
@@ -125,6 +142,20 @@ export default function HomeTodo({navigation}) {
 
   }
 
+// [도연] async 스토리지 데이터 체크용
+const loadStoredData = async () => {
+  try {
+    const storedData = await AsyncStorage.getItem('tasks');
+    if (storedData !== null) {
+      // console.log(JSON.parse(storedData));
+    } else {
+      console.log('No data found');
+    }
+  } catch (error) {
+    console.error('Error retrieving data', error);
+  }
+};
+
 // async 스토리지 전체 데이터 삭제 함수
 const clearAllData = async () => {
   try {
@@ -136,15 +167,17 @@ const clearAllData = async () => {
 };
 
 
-const gameData = navigation.params;
-useEffect(()=>{
-  if(gameData!= null){
-    console.log(gameData.toString())
-    // todo. 1.게임화면에서 2번을 누르고 정답을 맞추고 종료되어 홈화면으로 왔을때
-    // todo. 2.addTask 에 상태값과 제목값, randomNumber를 전달
-    _addTask(gameData);
-  }
-}, []);
+
+
+// const gameData = navigation.params;
+// useEffect(()=>{
+//   if(gameData!= null){
+//     console.log(gameData.toString())
+//     // todo. 1.게임화면에서 2번을 누르고 정답을 맞추고 종료되어 홈화면으로 왔을때
+//     // todo. 2.addTask 에 상태값과 제목값, randomNumber를 전달
+//     _addTask(gameData);
+//   }
+// }, []);
 
   return isReady ? (
     <ThemeProvider theme={theme}>
@@ -160,10 +193,14 @@ useEffect(()=>{
             value={newTask}
             onChangeText={_handleTextChange}
             onBlur={_onBlur}
+            onSubmitEditing={_addTask}
           />
-          {/* onSubmitEditing={_addTask} */}
           <Title>Play NumberbaseBall~!</Title>
         </Header>
+
+        <Button title="Load Stored Data" onPress={loadStoredData} />{/*스토리지 체크용*/}
+        <Button title="Delete Stored Data" onPress={clearAllData} />
+
         <CategoryArea>
           <CategoryText
             size="16px;"

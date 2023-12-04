@@ -1,5 +1,5 @@
 // global import
-import { Dimensions}  from 'react-native';
+import { Dimensions, BackHandler }  from 'react-native';
 import React, { useEffect, useState} from 'react';
 import StartView from '../baseball_game/StartView';
 import styled, { ThemeProvider } from 'styled-components/native';
@@ -49,13 +49,6 @@ function Game({ navigation }) {
         {title: 'noneTitle', state: 'notDone', randomNumber: randomNumber.toString(),}
     ])
 
-    // 게임 시작시 처음에 임시로 제목을 지정하는 useEffect()  
-    useEffect(() => {
-        navigation.setOptions({
-            title: '새로운 게임',
-        });
-    }, []);
-    
     // listItem을 정하는 useState
     const [listItem, setListItem] = useState([
         {id: '1', type: 'infoText', text: '숫자 야구 게임을 시작합니다~!'},
@@ -79,6 +72,28 @@ function Game({ navigation }) {
         id++;
     }
 
+    useEffect(() => {
+        if (info[0].title != "nonetitle") {
+            const backAction = () => {
+                console.log('Back button pressed');
+                goToHomeTodo(info[0]);
+                return true; // 이벤트를 여기서 종료
+            };
+
+            const backHandler = BackHandler.addEventListener(
+                'hardwareBackPress',
+                backAction
+            );
+
+            return () => backHandler.remove();
+        }
+    }, [info]);
+
+    const goToHomeTodo = (gameData) => {
+        console.log('Sending game data to HomeTodo:', gameData);
+        navigation.navigate('Home', { gameData });
+    };
+
     // listItem을 rendering 하는 함수
     const renderItem = ({ item }) => {
         switch(item.type){
@@ -90,6 +105,7 @@ function Game({ navigation }) {
                     navigation={navigation}
                     addItem={addItem}
                     setInfo={setInfo}
+                    info={info}
                     />
             case 'suggestNum':
                 return <SuggestNumView
@@ -112,22 +128,22 @@ function Game({ navigation }) {
                     />
             case 'goGameControl':
                 return <GoGameControlView
-                    text={item.text}
-                    addItem={addItem}
+                        text={item.text}
+                        addItem={addItem}
                     />
             case 'gameControl':
                 return <GameControlView
                     text={item.text}
                     addItem={addItem}
                     setInfo={setInfo}
-                    info={info}
+                    info={info[0]}
                     navigation={navigation}
                     />
             default:
                 return null;
         }
     }
-
+    
     return (
         <ThemeProvider theme={theme}>
             <Container>

@@ -3,12 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from './components/screens/HomeTodo';
 import Game from './components/screens/Game';
-
 export default function App() {
   const Stack = createStackNavigator();
 
   return (
-    <NavigationContainer>
+      <NavigationContainer>
       <Stack.Navigator initialRouteName="ScreenHome">
         <Stack.Screen name="Home" component={Home} 
           options={{
@@ -19,7 +18,7 @@ export default function App() {
         <Stack.Screen name="Game" component={Game} 
           options={{title: '게임 화면'}}
         />
-      </Stack.Navigator>
-    </NavigationContainer>
+        </Stack.Navigator>
+      </NavigationContainer>
   );
 }
