@@ -87,40 +87,25 @@ export default function HomeTodo({navigation, route}) {
     setTasks(JSON.parse(loadedTasks || '{}'));
   };
 
-  // const _addTask = (gameData) => {
-  //   const ID = Date.now().toString();
-  //   // 3.task에 위 항목들 표시
-  //   // todo. newtask를 gameData에 title로 변경
-  //   // todo. 나머지 gameData 전달
-  //   // todo. loadTask 함수도 같이 확인해보며 수정
-  //   const newTaskObject = {
-  //     [ID]: { id: ID, text: newTask, completed: false },
-  //   };
-  //   setNewTask('');
-  //   _saveTasks({ ...tasks, ...newTaskObject });
-  // };
   const _addTask = (gameData) => {
-    const ID = Date.now().toString();
-    const newTaskObject = {
-      [ID]: { 
-        id: ID, 
-        text: gameData.title.inputText,   // 예: 게임 제목 또는 설명
-        completed: gameData.completed,  // 예: 게임 완료 상태
-        // 필요한 경우 다른 gameData 속성 추가
-      },
-    };
-    _saveTasks({ ...tasks, ...newTaskObject });
-    console.log({ ...tasks, ...newTaskObject });
+    if(gameData && Object.keys(gameData).length > 0) {  // gameData가 존재하고, 객체의 속성 개수가 0보다 큰지 확인
+      const ID = Date.now().toString();
+      const newTaskObject = {
+        [ID]: { 
+          id: ID, 
+          text: gameData.title,   // 예: 게임 제목 또는 설명
+          completed: gameData.state,  // 예: 게임 완료 상태
+          // 필요한 경우 다른 gameData 속성 추가
+        },
+      };
+      _saveTasks({ ...tasks, ...newTaskObject });
+      console.log({ ...tasks, ...newTaskObject });
+    } else {
+      console.log(gameData);
+      console.log('gameData is undefined or empty');
+    }
   };
   
-  
-  
-  // useEffect(() => {
-  //   if (route.params?.gameData) {
-  //     console.log(route.params.gameData);
-  //     _addTask(route.params.gameData);
-  //   }
-  // }, [route.params]);
   useEffect(() => {
     const gameData = route.params?.gameData;
     
@@ -129,8 +114,6 @@ export default function HomeTodo({navigation, route}) {
       _addTask(gameData);
     }
   }, [route.params]);
-  
-
 
   const _deleteTask = id => {
     const currentTasks = Object.assign({}, tasks);
