@@ -36,7 +36,7 @@ function getRandomNumber() {
     return first * 100 + second * 10 + third;
 }
 
-const GameControlView = ({ text, addItem, setInfo, info, navigation, ...props }) => {
+const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
     // textInput editable 상태 관리 변수
     const [isEditable, setIsEditable] = useState(true);
     // textInput의 입력값의 상태 관리 변수
@@ -50,18 +50,12 @@ const GameControlView = ({ text, addItem, setInfo, info, navigation, ...props })
 
     const getType = (value) => {
         return typeof value;
-      };
+    };
 
     const goToHomeTodo = (gameData) => {
-    console.log('Sending game data to HomeTodo:', gameData);
-    navigation.navigate('Home', { gameData });
+        console.log('Sending game data to HomeTodo:', gameData);
+        navigation.navigate('Home', { gameData });
     };
-      
-    // const goToHomeTodo = (info) => {
-    //     console.log(getType(info));
-    //     navigation.navigate('Home', info[0] );
-    //     // object로 전달됨
-    // };
 
     const handleSubmitEditing = () => {
         if (inputNum) {
@@ -70,28 +64,16 @@ const GameControlView = ({ text, addItem, setInfo, info, navigation, ...props })
                 setInfo(prevInfo => {
                     return prevInfo.map(item => {
                         return {
-                            ...item, 
-                            state: 'notDone', 
+                            title: prevInfo.title,
+                            state: 'notDone',
                             randomNumber: getRandomNumber().toString(),
                         };
                     });
                 });
                 addItem('suggestNum', '숫자입력:');
             } else if (inputNum == '2') {
-                //goToHomeTodo(info);
-                const gameData = {
-                    title: info[0].title, // 예: 게임 타이틀
-                    completed: true, // 또는 다른 완료 여부를 표시하는 로직
-                    // 필요한 경우 다른 정보 추가
-                };
-                goToHomeTodo(gameData);
-            }else {
-                // 그 외 숫자 입력 시, 게임 중단 처리
-                const gameData = {
-                    title: info[0].title,// 또는 적절한 제목
-                    completed: false, // 게임 완료 여부
-                };
-                goToHomeTodo(gameData);
+                console.log(info);
+                goToHomeTodo(info);
             }
         }
     };

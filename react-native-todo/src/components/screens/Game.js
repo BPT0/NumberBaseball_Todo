@@ -79,6 +79,28 @@ function Game({ navigation }) {
         id++;
     }
 
+    useEffect(() => {
+        if (info[0].title != "nonetitle") {
+            const backAction = () => {
+                console.log('Back button pressed');
+                goToHomeTodo(info[0]);
+                return true; // 이벤트를 여기서 종료
+            };
+
+            const backHandler = BackHandler.addEventListener(
+                'hardwareBackPress',
+                backAction
+            );
+
+            return () => backHandler.remove();
+        }
+    }, [info]);
+
+    const goToHomeTodo = (gameData) => {
+        console.log('Sending game data to HomeTodo:', gameData);
+        navigation.navigate('Home', { gameData });
+    };
+
     // listItem을 rendering 하는 함수
     const renderItem = ({ item }) => {
         switch(item.type){
@@ -120,37 +142,13 @@ function Game({ navigation }) {
                     text={item.text}
                     addItem={addItem}
                     setInfo={setInfo}
-                    info={info}
+                    info={info[0]}
                     navigation={navigation}
                     />
             default:
                 return null;
         }
     }
-    
-    const goToHomeTodo = (gameData) => {
-        console.log('Sending game data to HomeTodo:', gameData);
-        navigation.navigate('Home', { gameData });
-        };
-          
-    useEffect(() => {
-        const backAction = () => {
-            console.log('Back button pressed');
-            const gameData = {
-            title: info[0].title, // 또는 사용자가 입력한 제목
-            completed: false,
-            };
-            goToHomeTodo(gameData);
-            return true; // 이벤트를 여기서 종료
-        };
-    
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-        }, []);
     
     return (
         <ThemeProvider theme={theme}>

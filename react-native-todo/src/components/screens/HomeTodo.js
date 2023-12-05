@@ -100,17 +100,21 @@ export default function HomeTodo({navigation, route}) {
   //   _saveTasks({ ...tasks, ...newTaskObject });
   // };
   const _addTask = (gameData) => {
-    const ID = Date.now().toString();
-    const newTaskObject = {
-      [ID]: { 
-        id: ID, 
-        text: gameData.title.inputText,   // 예: 게임 제목 또는 설명
-        completed: gameData.completed,  // 예: 게임 완료 상태
-        // 필요한 경우 다른 gameData 속성 추가
-      },
-    };
-    _saveTasks({ ...tasks, ...newTaskObject });
-    console.log({ ...tasks, ...newTaskObject });
+    if(gameData && Object.keys(gameData).length > 0) {  // gameData가 존재하고, 객체의 속성 개수가 0보다 큰지 확인
+      const ID = Date.now().toString();
+      const newTaskObject = {
+        [ID]: { 
+          id: ID, 
+          text: gameData.title,   // 예: 게임 제목 또는 설명
+          completed: gameData.state,  // 예: 게임 완료 상태
+          // 필요한 경우 다른 gameData 속성 추가
+        },
+      };
+      _saveTasks({ ...tasks, ...newTaskObject });
+      console.log(newTaskObject);
+    } else {
+      console.log('gameData is undefined or empty');
+    }
   };
   
   
@@ -165,7 +169,7 @@ const loadStoredData = async () => {
   try {
     const storedData = await AsyncStorage.getItem('tasks');
     if (storedData !== null) {
-      console.log(JSON.parse(storedData));
+      // console.log(JSON.parse(storedData));
     } else {
       console.log('No data found');
     }
