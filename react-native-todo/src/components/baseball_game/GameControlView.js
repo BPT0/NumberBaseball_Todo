@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components/native';
 import PropTypes from 'prop-types';
 import Input from '../base_component/Input';
-import { BackHandler } from 'react-native';//게임중단 컨트롤을 위한 안드로이드용 
 
 const Container = styled.View`
     flex-direction: row;
@@ -36,7 +35,7 @@ function getRandomNumber() {
     return first * 100 + second * 10 + third;
 }
 
-const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
+const GameControlView = ({ text, addItem, setInfo, navigation}) => {
     // textInput editable 상태 관리 변수
     const [isEditable, setIsEditable] = useState(true);
     // textInput의 입력값의 상태 관리 변수
@@ -50,72 +49,39 @@ const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
 
     const getType = (value) => {
         return typeof value;
-    };
+      };
 
     const goToHomeTodo = (gameData) => {
-        console.log('Sending game data to HomeTodo:', gameData);
-        navigation.navigate('Home', { gameData });
+    console.log('Sending game data to HomeTodo:', gameData);
+    navigation.navigate('Home', { gameData });
     };
+      
+    // const goToHomeTodo = (info) => {
+    //     console.log(getType(info));
+    //     navigation.navigate('Home', info[0] );
+    //     // object로 전달됨
+    // };
 
     const handleSubmitEditing = () => {
         if (inputNum) {
             setIsEditable(false);
             if (inputNum == '1') {
+                // 게임 재시작 기능 구현
                 setInfo(prevInfo => {
                     return prevInfo.map(item => {
                         return {
-                            title: prevInfo.title,
-                            state: 'notDone',
+                            title: prevInfo.title, 
+                            state: 'notDone', 
                             randomNumber: getRandomNumber().toString(),
                         };
                     });
                 });
                 addItem('suggestNum', '숫자입력:');
             } else if (inputNum == '2') {
-                console.log(info);
-                goToHomeTodo(info);
+                goToHomeTodo(info[0]);
             }
         }
     };
-    // useEffect(() => {
-    //     const backAction = () => {
-    //     console.log('Back button pressed');
-    //       const gameData = {
-    //         title: '게임 중단', // 또는 현재 게임 상태에 대한 제목
-    //         completed: false, // 게임이 완료되지 않았음을 나타냄
-    //         // 여기에 추가적인 게임 상태 데이터를 포함할 수 있음
-    //       };
-    //       navigation.navigate('HomeTodo', { gameData });
-    //       return true;
-    //     };
-    
-    //     const backHandler = BackHandler.addEventListener(
-    //       'hardwareBackPress',
-    //       backAction
-    //     );
-    
-    //     return () => backHandler.remove();
-    //   }, [navigation]);
-
-      useEffect(() => {
-        const backAction = () => {
-            console.log('Back button pressed');
-            const gameData = {
-            title: info[0].title, // 또는 사용자가 입력한 제목
-            completed: false,
-            };
-            goToHomeTodo(gameData);
-            return true; // 이벤트를 여기서 종료
-        };
-    
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-        }, []);
-    
 
     return (
         <Container>
