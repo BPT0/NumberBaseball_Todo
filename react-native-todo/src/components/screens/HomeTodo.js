@@ -87,25 +87,40 @@ export default function HomeTodo({navigation, route}) {
     setTasks(JSON.parse(loadedTasks || '{}'));
   };
 
+  // const _addTask = (gameData) => {
+  //   const ID = Date.now().toString();
+  //   // 3.task에 위 항목들 표시
+  //   // todo. newtask를 gameData에 title로 변경
+  //   // todo. 나머지 gameData 전달
+  //   // todo. loadTask 함수도 같이 확인해보며 수정
+  //   const newTaskObject = {
+  //     [ID]: { id: ID, text: newTask, completed: false },
+  //   };
+  //   setNewTask('');
+  //   _saveTasks({ ...tasks, ...newTaskObject });
+  // };
   const _addTask = (gameData) => {
-    if(gameData && Object.keys(gameData).length > 0) {  // gameData가 존재하고, 객체의 속성 개수가 0보다 큰지 확인
-      const ID = Date.now().toString();
-      const newTaskObject = {
-        [ID]: { 
-          id: ID, 
-          text: gameData.title,   // 예: 게임 제목 또는 설명
-          completed: gameData.state,  // 예: 게임 완료 상태
-          // 필요한 경우 다른 gameData 속성 추가
-        },
-      };
-      _saveTasks({ ...tasks, ...newTaskObject });
-      console.log({ ...tasks, ...newTaskObject });
-    } else {
-      console.log(gameData);
-      console.log('gameData is undefined or empty');
-    }
+    const ID = Date.now().toString();
+    const newTaskObject = {
+      [ID]: { 
+        id: ID, 
+        text: gameData.title,   // 예: 게임 제목 또는 설명
+        completed: gameData.completed,  // 예: 게임 완료 상태
+        // 필요한 경우 다른 gameData 속성 추가
+      },
+    };
+    _saveTasks({ ...tasks, ...newTaskObject });
+    console.log({ ...tasks, ...newTaskObject });
   };
   
+  
+  
+  // useEffect(() => {
+  //   if (route.params?.gameData) {
+  //     console.log(route.params.gameData);
+  //     _addTask(route.params.gameData);
+  //   }
+  // }, [route.params]);
   useEffect(() => {
     const gameData = route.params?.gameData;
     
@@ -114,6 +129,8 @@ export default function HomeTodo({navigation, route}) {
       _addTask(gameData);
     }
   }, [route.params]);
+  
+
 
   const _deleteTask = id => {
     const currentTasks = Object.assign({}, tasks);
@@ -143,7 +160,7 @@ export default function HomeTodo({navigation, route}) {
 
   }
 
-// [도연] async 스토리지 데이터 체크용
+// async 스토리지 데이터 체크용
 const loadStoredData = async () => {
   try {
     const storedData = await AsyncStorage.getItem('tasks');
@@ -166,10 +183,7 @@ const clearAllData = async () => {
     console.error('데이터 삭제 오류:', error);
   }
 };
-// 데이터 타입 오류로 앱 로딩 안될때 주석 해제하면 저장 데이터 모두 삭제
-// useEffect(() => {
-//   clearAllData();
-// }, []);
+
 
 
 
