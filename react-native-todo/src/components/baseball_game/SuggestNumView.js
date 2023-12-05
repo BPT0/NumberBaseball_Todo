@@ -34,10 +34,6 @@ const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
 
     const handleSubmitEditing = () => {
         setIsEditable(false);
-        // todo 1.inputNum이 3자리수 이하일때 - 1자리나 2자리수
-        // todo 2. 3개중 2개의 수가 같은 수일때
-        // todo     if. error 뷰 생성
-        console.log(answer);
         if (inputNum.length < 3) {
             addItem('error', '적절하지 않은 입력값입니다.\n올바른 값을 다시 입력해주세요.',);
         } else {
@@ -47,7 +43,6 @@ const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
                 addItem('error', '3개의 수는 모두 다른 수여야 합니다.\n올바른 값을 다시 입력해주세요.',);
             } else {
                 if (inputNum == answer) {
-                    // todo if. 3스트라이크라면 gameControl 뷰 생성
                     addItem('goGameControl', '3스트라이크!!\n3개의 숫자를 모두 맞히셨습니다.',);
                     setInfo(prevInfo => {
                         // 이전 상태(prevInfo)를 기반으로 새로운 상태를 반환
@@ -60,7 +55,6 @@ const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
                         });
                     });
                 } else {
-                    // todo 1.볼체크 : 입력한 숫자가 자리는 틀리고 숫자만 맞을때 - 개당 볼
                     let ball = 0;
                     for (let i = 0; i < inputNum.length; i++) {
                         for (let j = 0; j < inputNum.length; j++) {
@@ -73,7 +67,6 @@ const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
                     }
                     console.log(ball.toString());
 
-                    // todo 2.스트라이크 체크: 입력한 숫자가 자리도 맞고 숫자도 맞을때 - 개당 스트라이크
                     let strike = 0;
                     for (let i = 0; i < inputNum.length; i++) {
                         if (inputNum[i] == answer[i])
@@ -81,13 +74,11 @@ const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
                     }
                     console.log(strike.toString());
 
-                    // todo 3.낫싱 체크 : 스트라이크와 ball 값이 둘다 0일때 낫싱 표시
                     let isNothing = false;
                     if (strike == 0 && ball == 0) {
                         isNothing = true;
                     }
                     
-                    // todo if. result 뷰 생성
                     addItemResult('result', isNothing, ball, strike);
                 }
             }

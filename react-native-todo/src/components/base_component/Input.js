@@ -25,7 +25,6 @@ const Input = ({
   autoFocus
 }) => {
   const width = Dimensions.get('window').width;
-  // const width = useWindowDimensions().width;
 
   return (
     <StyledInput

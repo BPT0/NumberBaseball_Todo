@@ -1,19 +1,19 @@
+// global import
 import React, { useEffect, useState } from 'react';
 import {
   StatusBar,
   Dimensions,
   TouchableOpacity,
-  TouchableHighlight,
+  Button,
 } from 'react-native';
-import styled, { ThemeProvider } from 'styled-components/native';
-import { theme } from '../../theme';
-import Input from '../base_component/Input';
-import Task from '../todo/Task';
 import AppLoading from 'expo-app-loading';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatButton from '../todo/component/FloatButton';
-
-import { Button } from 'react-native'; // 스토리지 체크용 Button 컴포넌트 추가
+import styled, { ThemeProvider } from 'styled-components/native';
+// local import
+import { theme } from '../../theme';
+import Input from '../base_component/Input';
+import Task from '../todo/Task';
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -67,12 +67,22 @@ const List = styled.ScrollView`
   width: ${({ width }) => width - 40}px;
 `;
 
-export default function HomeTodo({navigation, route}) {
+export default function HomeTodo({ navigation, route }) {
   const width = Dimensions.get('window').width;
 
   const [isReady, setIsReady] = useState(false);
   const [newTask, setNewTask] = useState('');
   const [tasks, setTasks] = useState({});
+
+
+  useEffect(() => {
+    const gameData = route.params?.gameData;
+
+    if (gameData) {
+      console.log('Received game data:', gameData);
+      _addTask(gameData);
+    }
+  }, [route.params]);
 
   const _saveTasks = async tasks => {
     try {
@@ -88,31 +98,21 @@ export default function HomeTodo({navigation, route}) {
   };
 
   const _addTask = (gameData) => {
-    if(gameData && Object.keys(gameData).length > 0) {  // gameData가 존재하고, 객체의 속성 개수가 0보다 큰지 확인
+    if (gameData && Object.keys(gameData).length > 0) {  // gameData가 존재하고, 객체의 속성 개수가 0보다 큰지 확인
       const ID = Date.now().toString();
       const newTaskObject = {
-        [ID]: { 
-          id: ID, 
-          text: gameData.title,   // 예: 게임 제목 또는 설명
-          completed: gameData.state,  // 예: 게임 완료 상태
-          // 필요한 경우 다른 gameData 속성 추가
+        [ID]: {
+          id: ID,
+          text: gameData.title,       // 게임 제목 
+          completed: gameData.state,  // 게임 완료 상태
+          randomNumber: gameData.randomNumber, // 게임 설정 숫자값
         },
       };
       _saveTasks({ ...tasks, ...newTaskObject });
-      console.log(newTaskObject);
     } else {
       console.log('gameData is undefined or empty');
     }
   };
-  
-  useEffect(() => {
-    const gameData = route.params?.gameData;
-    
-    if (gameData) {
-      console.log('Received game data:', gameData);
-      _addTask(gameData);
-    }
-  }, [route.params]);
 
   const _deleteTask = id => {
     const currentTasks = Object.assign({}, tasks);
@@ -138,47 +138,30 @@ export default function HomeTodo({navigation, route}) {
     setNewTask('');
   };
 
-  const _goGameScreen = () => {
-
-  }
-
-// [도연] async 스토리지 데이터 체크용
-const loadStoredData = async () => {
-  try {
-    const storedData = await AsyncStorage.getItem('tasks');
-    if (storedData !== null) {
-      // console.log(JSON.parse(storedData));
-    } else {
-      console.log('No data found');
+  // [도연] async 스토리지 데이터 체크용
+  const loadStoredData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem('tasks');
+      if (storedData !== null) {
+        // console.log(JSON.parse(storedData));
+      } else {
+        console.log('No data found');
+      }
+    } catch (error) {
+      console.error('Error retrieving data', error);
     }
-  } catch (error) {
-    console.error('Error retrieving data', error);
-  }
-};
+  };
 
-// async 스토리지 전체 데이터 삭제 함수
-const clearAllData = async () => {
-  try {
-    await AsyncStorage.clear();
-    console.log('모든 데이터가 삭제되었습니다.');
-  } catch (error) {
-    console.error('데이터 삭제 오류:', error);
-  }
-};
-
-
-
-
-// const gameData = navigation.params;
-// useEffect(()=>{
-//   if(gameData!= null){
-//     console.log(gameData.toString())
-//     // todo. 1.게임화면에서 2번을 누르고 정답을 맞추고 종료되어 홈화면으로 왔을때
-//     // todo. 2.addTask 에 상태값과 제목값, randomNumber를 전달
-//     _addTask(gameData);
-//   }
-// }, []);
-
+  // async 스토리지 전체 데이터 삭제 함수
+  const clearAllData = async () => {
+    try {
+      await AsyncStorage.clear();
+      console.log('모든 데이터가 삭제되었습니다.');
+    } catch (error) {
+      console.error('데이터 삭제 오류:', error);
+    }
+  };
+  
   return isReady ? (
     <ThemeProvider theme={theme}>
       <Container>
@@ -188,14 +171,19 @@ const clearAllData = async () => {
         />
 
         <Header>
-          <Input
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Game')}
+          >
+
+          </TouchableOpacity>
+          {/* <Input
             placeholder="+"
             value={newTask}
             onChangeText={_handleTextChange}
             onBlur={_onBlur}
             onSubmitEditing={_addTask}
           />
-          <Title>Play NumberbaseBall~!</Title>
+          <Title>Play Number baseBall~!</Title> */}
         </Header>
 
         <Button title="Load Stored Data" onPress={loadStoredData} />{/*스토리지 체크용*/}
@@ -211,9 +199,9 @@ const clearAllData = async () => {
           >
             Category
           </CategoryText>
-            <CategoryBox bgColor="#EBEFF5">
+          <CategoryBox bgColor="#EBEFF5">
             <TouchableOpacity onPress={() => console.log('카테고리 1선택됨')}>
-            <CategoryText>Not Solved</CategoryText>
+              <CategoryText>Not Solved</CategoryText>
               <CategoryText
                 textColor="#252A31"
                 size="14px;"
@@ -223,32 +211,32 @@ const clearAllData = async () => {
                 0 task
               </CategoryText>
             </TouchableOpacity>
-            </CategoryBox>
+          </CategoryBox>
           <CategoryBox bgColor="#61DEA4">
-          <TouchableOpacity onPress={() => console.log('카테고리 2선택됨')}>
-          <CategoryText textColor="#fff">Solved</CategoryText>
-            <CategoryText
-              textColor="#fff"
-              size="14px;"
-              opacity="0.5"
-              weight="400"
-            >
-              2 task
-            </CategoryText>
-          </TouchableOpacity>
+            <TouchableOpacity onPress={() => console.log('카테고리 2선택됨')}>
+              <CategoryText textColor="#fff">Solved</CategoryText>
+              <CategoryText
+                textColor="#fff"
+                size="14px;"
+                opacity="0.5"
+                weight="400"
+              >
+                2 task
+              </CategoryText>
+            </TouchableOpacity>
           </CategoryBox>
           <CategoryBox bgColor="#F45E6D">
-          <TouchableOpacity onPress={() => console.log('카테고리 3선택됨')}>
-          <CategoryText textColor="#fff">Don’t want Game</CategoryText>
-            <CategoryText
-              textColor="#fff"
-              size="14px;"
-              opacity="0.5"
-              weight="400"
-            >
-              3 task
-            </CategoryText>          
-          </TouchableOpacity>
+            <TouchableOpacity onPress={() => console.log('카테고리 3선택됨')}>
+              <CategoryText textColor="#fff">Don’t want Game</CategoryText>
+              <CategoryText
+                textColor="#fff"
+                size="14px;"
+                opacity="0.5"
+                weight="400"
+              >
+                3 task
+              </CategoryText>
+            </TouchableOpacity>
           </CategoryBox>
         </CategoryArea>
 
@@ -262,6 +250,7 @@ const clearAllData = async () => {
                 deleteTask={_deleteTask}
                 toggleTask={_toggleTask}
                 updateTask={_updateTask}
+                navigation={navigation}
               />
             ))}
         </List>

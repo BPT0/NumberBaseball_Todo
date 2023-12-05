@@ -5,6 +5,7 @@ import StartView from '../baseball_game/StartView';
 import styled, { ThemeProvider } from 'styled-components/native';
 import 'react-native-get-random-values';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useFocusEffect } from '@react-navigation/native';
 // local import
 import { theme } from '../../theme';
 import InputTitleView from '../baseball_game/InputTitleView';
@@ -40,10 +41,10 @@ function getRandomNumber() {
     return first * 100 + second * 10 + third;
 }
 
-function Game({ navigation }) {
+function Game({ navigation, route }) {
     const width = Dimensions.get('window').width;
     const randomNumber = getRandomNumber();
-
+    
     // 게임에서 todo로 넘기기위한 data를 보관하는 useState
     const [info, setInfo] = useState([
         {title: null, state: 'notDone', randomNumber: randomNumber.toString(),}
@@ -51,29 +52,28 @@ function Game({ navigation }) {
 
     // listItem을 정하는 useState
     const [listItem, setListItem] = useState([
-        {id: '1', type: 'infoText', text: '숫자 야구 게임을 시작합니다~!'},
-        {id: '2', type: 'inputTitle', text: '게임 제목 입력: ',  },
     ]);
 
     // list의 id
     const [id, setId] = useState(2);
 
     // listItem을 추가하는 addItem 함수
-    const addItem = (type, text) => {
-        const newItem = {id: id.toString(), type: type, text: text};
-        setListItem([...listItem, newItem]);
-        setId(prevInfo => {
-            return prevInfo++;
+    const addItem = async (type, text) => {
+        return new Promise(resolve => {
+            const newItem = {id: id.toString(), type: type, text: text};
+            setListItem(prevItems => {
+                resolve();
+                return [...prevItems, newItem];
+            });
+            setId(prevInfo => prevInfo + 1);
         });
-    }
+    };
 
     // listItem-resultView 를 추가하는 함수
     const addItemResult = (type, isNothing, ball, strike) => {
         const newItem = {id: id.toString(), type: type, isNothing: isNothing, ball: ball, strike: strike};
-        setListItem([...listItem, newItem]);
-        setId(prevInfo => {
-            return prevInfo++;
-        });
+        setListItem(prevItems => [...prevItems, newItem]);
+        setId(prevInfo => prevInfo + 1);
     }
 
     React.useLayoutEffect(() => { // 화면 그리기 전 동기적으로 실행
@@ -96,8 +96,34 @@ function Game({ navigation }) {
         });
     }, [navigation, info]);
 
+    useFocusEffect(
+        React.useCallback(() => {
+            const updateItems = async () => {
+                const todoItem = route.params?.item;
+                if (todoItem === undefined) {
+                    await addItem('infoText', '숫자 야구 게임을 시작합니다~!');
+                    await addItem('inputTitle', '게임 제목 입력: ');
+                } else {
+                    if (todoItem.completed == 'done') {
+                        await addItem('infoText', '이전 게임에서 정답을 맞췄습니다!');
+                        await addItem('infoText', '숫자 야구 게임을 시작합니다~!');
+                        await addItem('suggestNum', '숫자 입력: ');
+                    } else if(todoItem.completed == 'notDone') {
+                        await addItem('infoText', '이전 게임에서 정답을 못 맞췄습니다!');
+                        await addItem('infoText', '숫자 야구 게임을 시작합니다~!');
+                        await addItem('suggestNum', '숫자 입력: ');
+                    }
+                }
+            };
+            updateItems();
+            return () => {
+                // 화면이 포커스를 잃을 때 실행할 코드를 여기 작성하십시오.
+                // 예를 들어, 리소스를 정리(clean-up)하는 등의 작업을 수행할 수 있습니다.
+            };
+        }, [route.params])
+    );
+
     useEffect(() => { // 화면 그린 후 랜더링 작업 완료된 후 비동기적으로 실행
-        
         if (info[0].title != null) {
             const backAction = () => {
                 console.log('Back button pressed');
@@ -130,7 +156,6 @@ function Game({ navigation }) {
                     navigation={navigation}
                     addItem={addItem}
                     setInfo={setInfo}
-                    info={info}
                     />
             case 'suggestNum':
                 return <SuggestNumView

@@ -20,7 +20,7 @@ const Contents = styled.Text`
   color: ${({ theme }) => theme.textBlack};
 `;
 
-const InputTitleView = ({ text, navigation, addItem, setInfo, info}) => {
+const InputTitleView = ({ text, navigation, addItem, setInfo}) => {
   // textInput editable 상태 관리 변수
   const [isEditable, setIsEditable] = useState(true);
   // textInput의 입력값의 상태 관리 변수
