@@ -1,5 +1,5 @@
 // global import
-import { Dimensions, BackHandler }  from 'react-native';
+import { Dimensions, BackHandler, TouchableOpacity, Image }  from 'react-native';
 import React, { useEffect, useState} from 'react';
 import StartView from '../baseball_game/StartView';
 import styled, { ThemeProvider } from 'styled-components/native';
@@ -15,7 +15,7 @@ import GoGameControlView from '../baseball_game/GoGameControlView';
 import GameControlView from '../baseball_game/GameControlView';
 
 const List = styled.FlatList`
-    width: ${({ width }) => width - 40}px;
+
 `;
 
 const Container = styled.SafeAreaView`
@@ -46,7 +46,7 @@ function Game({ navigation }) {
 
     // 게임에서 todo로 넘기기위한 data를 보관하는 useState
     const [info, setInfo] = useState([
-        {title: 'noneTitle', state: 'notDone', randomNumber: randomNumber.toString(),}
+        {title: null, state: 'notDone', randomNumber: randomNumber.toString(),}
     ])
 
     // listItem을 정하는 useState
@@ -56,24 +56,49 @@ function Game({ navigation }) {
     ]);
 
     // list의 id
-    let id = 3;
+    const [id, setId] = useState(2);
 
     // listItem을 추가하는 addItem 함수
     const addItem = (type, text) => {
         const newItem = {id: id.toString(), type: type, text: text};
         setListItem([...listItem, newItem]);
-        id++;
+        setId(prevInfo => {
+            return prevInfo++;
+        });
     }
 
     // listItem-resultView 를 추가하는 함수
     const addItemResult = (type, isNothing, ball, strike) => {
         const newItem = {id: id.toString(), type: type, isNothing: isNothing, ball: ball, strike: strike};
         setListItem([...listItem, newItem]);
-        id++;
+        setId(prevInfo => {
+            return prevInfo++;
+        });
     }
 
-    useEffect(() => {
-        if (info[0].title != "nonetitle") {
+    React.useLayoutEffect(() => { // 화면 그리기 전 동기적으로 실행
+        navigation.setOptions({
+            headerLeft: (props) => (
+                <TouchableOpacity
+                    {...props}
+                    onPress={() => {
+                        console.log('뒤로가기 버튼이 눌렸습니다.');
+                        goToHomeTodo(info[0]);
+                    }}
+                    style={{ paddingTop: 8, paddingLeft: 15 }}
+                >
+                    <Image
+                        source={require('../../../assets/icons/icon_back.png')}
+                        style={{ width: 24, height: 24 }}
+                    />
+                </TouchableOpacity>
+            ),
+        });
+    }, [navigation, info]);
+
+    useEffect(() => { // 화면 그린 후 랜더링 작업 완료된 후 비동기적으로 실행
+        
+        if (info[0].title != null) {
             const backAction = () => {
                 console.log('Back button pressed');
                 goToHomeTodo(info[0]);
