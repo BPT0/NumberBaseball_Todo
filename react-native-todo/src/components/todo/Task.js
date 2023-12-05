@@ -84,7 +84,6 @@ const Task = ({ item, deleteTask, toggleTask, updateTask }) => {
       
       <Contents completed={item.completed}>
         {item.text} {/*게임 타이틀 값*/}
-        {/* {item.gameData ? ` - 게임 결과: ${item.gameData.result}` : ''} */}
       </Contents>
       <StatusIcon status={item.completed} />
 

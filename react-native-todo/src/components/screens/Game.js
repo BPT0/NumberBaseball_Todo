@@ -71,12 +71,18 @@ function Game({ navigation }) {
         setListItem([...listItem, newItem]);
         id++;
     }
-
-    useEffect(() => {
-        if (info[0].title != "nonetitle") {
+    const goToHomeTodo = (gameData) => {
+        console.log('Sending game data to HomeTodo:', gameData);
+        navigation.navigate('Home', { gameData });
+        };
+        useEffect(() => {
             const backAction = () => {
                 console.log('Back button pressed');
-                goToHomeTodo(info[0]);
+                const gameData = {
+                    title: info[0].title, // 상태에서 제목 가져오기
+                    completed: false,
+                };
+                goToHomeTodo(gameData);
                 return true; // 이벤트를 여기서 종료
             };
 
@@ -86,13 +92,8 @@ function Game({ navigation }) {
             );
 
             return () => backHandler.remove();
-        }
-    }, [info]);
+        }, [info]); // 의존성 배열에 info 추가
 
-    const goToHomeTodo = (gameData) => {
-        console.log('Sending game data to HomeTodo:', gameData);
-        navigation.navigate('Home', { gameData });
-    };
 
     // listItem을 rendering 하는 함수
     const renderItem = ({ item }) => {
@@ -136,7 +137,7 @@ function Game({ navigation }) {
                     text={item.text}
                     addItem={addItem}
                     setInfo={setInfo}
-                    info={info[0]}
+                    info={info}
                     navigation={navigation}
                     />
             default:

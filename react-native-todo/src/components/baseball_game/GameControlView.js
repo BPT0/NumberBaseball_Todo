@@ -60,20 +60,25 @@ const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
         if (inputNum) {
             setIsEditable(false);
             if (inputNum == '1') {
-                // 게임 재시작 기능 구현
                 setInfo(prevInfo => {
                     return prevInfo.map(item => {
                         return {
-                            title: prevInfo.title,
-                            state: 'notDone',
+                            ...item, 
+                            state: 'notDone', 
                             randomNumber: getRandomNumber().toString(),
                         };
                     });
                 });
                 addItem('suggestNum', '숫자입력:');
             } else if (inputNum == '2') {
-                console.log(info);
-                goToHomeTodo(info);
+                
+                //goToHomeTodo(info);
+                const gameData = {
+                    title: info[0].title, // 예: 게임 타이틀
+                    completed: true, // 또는 다른 완료 여부를 표시하는 로직
+                    // 필요한 경우 다른 정보 추가
+                };
+                goToHomeTodo(gameData);
             }
         }
     };
