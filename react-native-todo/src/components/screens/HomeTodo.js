@@ -4,6 +4,7 @@ import {
   Dimensions,
   TouchableOpacity,
   TouchableHighlight,
+  Image,
 } from 'react-native';
 import styled, { ThemeProvider } from 'styled-components/native';
 import { theme } from '../../theme';
@@ -12,6 +13,7 @@ import Task from '../todo/Task';
 import AppLoading from 'expo-app-loading';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatButton from '../todo/component/FloatButton';
+import { images } from '../todo/images/images';
 
 import { Button } from 'react-native'; // 스토리지 체크용 Button 컴포넌트 추가
 
@@ -24,6 +26,8 @@ const Container = styled.SafeAreaView`
 const Header = styled.View`
   flex-direction: row;
   align-items: center;
+  justify-content: center;
+
   width: 100%;
   padding: 20px;
 `;
@@ -31,8 +35,10 @@ const Title = styled.Text`
   font-size: 25px;
   font-weight: 600;
   color: #252a31;
-  align-self: flex-start;
-  margin-top: 20px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-left:30px;
 `;
 
 const CategoryArea = styled.View`
@@ -86,24 +92,6 @@ export default function HomeTodo({navigation, route}) {
     const loadedTasks = await AsyncStorage.getItem('tasks');
     setTasks(JSON.parse(loadedTasks || '{}'));
   };
-
-  // const _addTask = (gameData) => {
-  //   if(gameData && Object.keys(gameData).length > 0) {  // gameData가 존재하고, 객체의 속성 개수가 0보다 큰지 확인
-  //     const ID = Date.now().toString();
-  //     const newTaskObject = {
-  //       [ID]: { 
-  //         id: ID, 
-  //         text: gameData.title.textInput,   // 예: 게임 제목 또는 설명
-  //         completed: gameData.state,  // 예: 게임 완료 상태
-  //         // 필요한 경우 다른 gameData 속성 추가
-  //       },
-  //     };
-  //     _saveTasks({ ...tasks, ...newTaskObject });
-  //     console.log(newTaskObject);
-  //   } else {
-  //     console.log('gameData is undefined or empty');
-  //   }
-  // };
   const _addTask = (gameData) => {
     const ID = Date.now().toString();
     const newTaskObject = {
@@ -181,17 +169,6 @@ const clearAllData = async () => {
 
 
 
-
-// const gameData = navigation.params;
-// useEffect(()=>{
-//   if(gameData!= null){
-//     console.log(gameData.toString())
-//     // todo. 1.게임화면에서 2번을 누르고 정답을 맞추고 종료되어 홈화면으로 왔을때
-//     // todo. 2.addTask 에 상태값과 제목값, randomNumber를 전달
-//     _addTask(gameData);
-//   }
-// }, []);
-
   return isReady ? (
     <ThemeProvider theme={theme}>
       <Container>
@@ -201,14 +178,16 @@ const clearAllData = async () => {
         />
 
         <Header>
-          <Input
-            placeholder="+"
-            value={newTask}
-            onChangeText={_handleTextChange}
-            onBlur={_onBlur}
-            onSubmitEditing={_addTask}
+          <TouchableOpacity 
+          onPress={() => navigation.navigate('Game')}
+          style={{ flexDirection: 'row', alignItems: 'center' }}
+          >
+          <Image 
+          source={images.Plus} 
+          style={{ width: 20, height: 20, marginLeft: 45}} 
           />
-          <Title>Play NumberbaseBall~!</Title>
+            <Title>Play NumberbaseBall~!</Title>
+          </TouchableOpacity>
         </Header>
 
         <Button title="Load Stored Data" onPress={loadStoredData} />{/*스토리지 체크용*/}
