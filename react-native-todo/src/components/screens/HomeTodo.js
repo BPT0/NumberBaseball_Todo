@@ -14,6 +14,7 @@ import AppLoading from 'expo-app-loading';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatButton from '../todo/component/FloatButton';
 import { images } from '../todo/images/images';
+import CategoryModal from './CategoryModal';
 
 import { Button } from 'react-native'; // 스토리지 체크용 Button 컴포넌트 추가
 
@@ -75,10 +76,13 @@ const List = styled.ScrollView`
 
 export default function HomeTodo({navigation, route}) {
   const width = Dimensions.get('window').width;
-
+  const [selectedCategory, setSelectedCategory] = useState(null); // 카테고리 필터링을 위한 상태
+  const [isModalVisible, setIsModalVisible] = useState(false); // 모달창 상태관리
+  const [categoryData, setCategoryData] = useState({ tasks: [] });
+  
   const [isReady, setIsReady] = useState(false);
   const [newTask, setNewTask] = useState('');
-  const [tasks, setTasks] = useState({});
+  const [tasks, setTasks] = useState([]);
 
   const _saveTasks = async tasks => {
     try {
@@ -88,22 +92,48 @@ export default function HomeTodo({navigation, route}) {
       console.error(e);
     }
   };
+
+  
+    
+
   const _loadTasks = async () => {
-    const loadedTasks = await AsyncStorage.getItem('tasks');
-    setTasks(JSON.parse(loadedTasks || '{}'));
+    try {
+      const loadedTasks = await AsyncStorage.getItem('tasks');
+      const parsedTasks = JSON.parse(loadedTasks || '[]'); // 문자열이 비어있을 경우 빈 배열로 파싱
+      setTasks(Array.isArray(parsedTasks) ? parsedTasks : []);
+    } catch (e) {
+      console.error(e);
+      setTasks([]); // 에러가 발생할 경우 tasks를 빈 배열로 초기화
+    }
   };
+
+  // const _addTask = (gameData) => {
+  //   const ID = Date.now().toString();
+  //   const newTaskObject = {
+  //     [ID]: { 
+  //       id: ID, 
+  //       text: gameData.title,   // 예: 게임 제목 또는 설명
+  //       completed: gameData.completed,  // 예: 게임 완료 상태
+  //     },
+  //   };
+  //   _saveTasks([ ...tasks, ...newTaskObject ]);
+  //   console.log([...tasks, ...newTaskObject ]);
+  // };
   const _addTask = (gameData) => {
     const ID = Date.now().toString();
     const newTaskObject = {
-      [ID]: { 
-        id: ID, 
-        text: gameData.title,   // 예: 게임 제목 또는 설명
-        completed: gameData.completed,  // 예: 게임 완료 상태
-        // 필요한 경우 다른 gameData 속성 추가
-      },
+      id: ID,
+      text: gameData.title, // 예: 게임 제목 또는 설명
+      completed: gameData.completed, // 예: 게임 완료 상태
     };
-    _saveTasks({ ...tasks, ...newTaskObject });
-    console.log({ ...tasks, ...newTaskObject });
+  
+    if (Array.isArray(tasks)) {
+      // tasks가 배열인 경우에만 새로운 태스크를 추가합니다.
+      _saveTasks([...tasks, newTaskObject]);
+    } else {
+      // tasks가 배열이 아닌 경우에는 새 배열을 생성합니다.
+      _saveTasks([newTaskObject]);
+    }
   };
   
   useEffect(() => {
@@ -142,6 +172,33 @@ export default function HomeTodo({navigation, route}) {
   const _goGameScreen = () => {
 
   }
+
+
+
+  //카테고리 선택 핸들러
+  const handleCategorySelect = (selectedCategory) => {
+  const tasksFilteredByCategory = Array.isArray(tasks) ? tasks.filter(task =>
+    selectedCategory === 'solved' ? task.completed : !task.completed
+  ) : [];
+
+  setCategoryData({
+    title: selectedCategory === 'solved' ? 'Solved' : 'Not Solved',
+    color: selectedCategory === 'solved' ? '#61DEA4' : '#EBEFF5',
+    tasks: tasksFilteredByCategory
+  });
+
+  setIsModalVisible(true);
+};
+
+  
+  // //카테고리에 따른 Task 필터링
+  // const filteredTasks = selectedCategory === 'solved' 
+  // ? Object.values(tasks).filter(task => task.completed)
+  // : selectedCategory === 'notSolved'
+  // ? Object.values(tasks).filter(task => !task.completed)
+  // : Object.values(tasks); // 기본값은 모든 Task 표시
+
+  
 
 // [도연] async 스토리지 데이터 체크용
 const loadStoredData = async () => {
@@ -204,7 +261,7 @@ const clearAllData = async () => {
             Category
           </CategoryText>
             <CategoryBox bgColor="#EBEFF5">
-            <TouchableOpacity onPress={() => console.log('카테고리 1선택됨')}>
+            <TouchableOpacity onPress={() => handleCategorySelect('notSolved')}>
             <CategoryText>Not Solved</CategoryText>
               <CategoryText
                 textColor="#252A31"
@@ -217,7 +274,7 @@ const clearAllData = async () => {
             </TouchableOpacity>
             </CategoryBox>
           <CategoryBox bgColor="#61DEA4">
-          <TouchableOpacity onPress={() => console.log('카테고리 2선택됨')}>
+          <TouchableOpacity onPress={() => handleCategorySelect('solved')}>
           <CategoryText textColor="#fff">Solved</CategoryText>
             <CategoryText
               textColor="#fff"
@@ -243,6 +300,15 @@ const clearAllData = async () => {
           </TouchableOpacity>
           </CategoryBox>
         </CategoryArea>
+
+        <CategoryModal
+          isVisible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          title={selectedCategory === 'notSolved' ? 'Not Solved' : 'Solved'}
+          color={selectedCategory === 'notSolved' ? '#EBEFF5' : '#61DEA4'}
+          category={categoryData}
+        />
+
 
         <List width={width}>
           {Object.values(tasks)
