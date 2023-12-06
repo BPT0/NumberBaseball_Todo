@@ -1,10 +1,11 @@
 // global import
-import { Dimensions, BackHandler }  from 'react-native';
-import React, { useEffect, useState} from 'react';
+import { Dimensions, BackHandler, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import StartView from '../baseball_game/StartView';
 import styled, { ThemeProvider } from 'styled-components/native';
 import 'react-native-get-random-values';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useFocusEffect } from '@react-navigation/native';
 // local import
 import { theme } from '../../theme';
 import InputTitleView from '../baseball_game/InputTitleView';
@@ -40,40 +41,120 @@ function getRandomNumber() {
     return first * 100 + second * 10 + third;
 }
 
-function Game({ navigation }) {
+function Game({ navigation, route }) {
     const width = Dimensions.get('window').width;
     const randomNumber = getRandomNumber();
 
     // 게임에서 todo로 넘기기위한 data를 보관하는 useState
     const [info, setInfo] = useState([
-        {title: 'noneTitle', state: 'notDone', randomNumber: randomNumber.toString(),}
+        {
+            title: null, state: 'notDone',
+            randomNumber: randomNumber.toString(),
+            isTodo: false
+        }
     ])
 
     // listItem을 정하는 useState
     const [listItem, setListItem] = useState([
-        {id: '1', type: 'infoText', text: '숫자 야구 게임을 시작합니다~!'},
-        {id: '2', type: 'inputTitle', text: '게임 제목 입력: ',  },
     ]);
 
     // list의 id
-    let id = 3;
+    const [id, setId] = useState(2);
 
     // listItem을 추가하는 addItem 함수
-    const addItem = (type, text) => {
-        const newItem = {id: id.toString(), type: type, text: text};
-        setListItem([...listItem, newItem]);
-        id++;
-    }
+    const addItem = async (type, text) => {
+        return new Promise(resolve => {
+            const newItem = { id: id.toString(), type: type, text: text };
+            setListItem(prevItems => {
+                resolve();
+                return [...prevItems, newItem];
+            });
+            setId(prevInfo => prevInfo + 1);
+        });
+    };
 
     // listItem-resultView 를 추가하는 함수
-    const addItemResult = (type, isNothing, ball, strike) => {
-        const newItem = {id: id.toString(), type: type, isNothing: isNothing, ball: ball, strike: strike};
-        setListItem([...listItem, newItem]);
-        id++;
+    const addItemResult = async (type, isNothing, ball, strike) => {
+        const newItem = { id: id.toString(), type: type, isNothing: isNothing, ball: ball, strike: strike };
+        setListItem(prevItems => [...prevItems, newItem]);
+        setId(prevInfo => prevInfo + 1);
     }
 
-    useEffect(() => {
-        if (info[0].title != "nonetitle") {
+    const setInfos = async (title, randomNumber) => {
+        navigation.setOptions({ title: title })
+        setInfo(prevInfo => {
+            // 이전 상태(prevInfo)를 기반으로 새로운 상태를 반환
+            return prevInfo.map(item => {
+                // 각 아이템의 title을 수정
+                return {
+                    ...item, // 기존 아이템의 다른 속성들은 그대로 유지
+                    title: title, // 새로운 title 값으로 업데이트
+                    randomNumber: randomNumber,
+                    isTodo: true,
+                };
+            });
+        });
+    }
+
+    React.useLayoutEffect(() => { // 화면 그리기 전 동기적으로 실행
+        navigation.setOptions({
+            headerLeft: (props) => (
+                <TouchableOpacity
+                    {...props}
+                    onPress={() => {
+                        console.log('뒤로가기 버튼이 눌렸습니다.');
+                        goToHomeTodo(info[0]);
+                    }}
+                    style={{ paddingTop: 8, paddingLeft: 15 }}
+                >
+                    <Image
+                        source={require('../../../assets/icons/icon_back.png')}
+                        style={{ width: 24, height: 24 }}
+                    />
+                </TouchableOpacity>
+            ),
+        });
+    }, [navigation, info]);
+
+    useFocusEffect( // navigationo으로 화면 1번 이동시 실행되는 후크
+        React.useCallback(() => {
+            const updateItems = async () => {
+                const todoItem = route.params?.item;
+                if (todoItem === undefined) {
+                    await addItem('infoText', '숫자 야구 게임을 시작합니다~!');
+                    await addItem('inputTitle', '게임 제목 입력: ');
+                } else {
+                    console.log(todoItem);
+                    // title 하고 randomNumber 상태값 을 todoItem의 값으로 설정
+                    if (todoItem.completed == 'done') {
+                        await setInfos(todoItem.text, todoItem.randomNumber);
+                        await addItem('infoText', '이전 게임에서 정답을 맞췄습니다!');
+                        await addItem('infoText', '숫자 야구 게임을 시작합니다~!');
+                        await addItem('suggestNum', '숫자 입력: ');
+                    } else if (todoItem.completed == 'notDone') {
+                        await setInfos(todoItem.text, todoItem.randomNumber);
+                        await addItem('infoText', '이전 게임에서 정답을 못 맞췄습니다!');
+                        await addItem('infoText', '숫자 야구 게임을 시작합니다~!');
+                        await addItem('suggestNum', '숫자 입력: ');
+                    }else{
+                        await setInfos(todoItem.text, todoItem.randomNumber);
+                        await addItem('infoText', '이전 게임에서 정답을 못 맞췄습니다!');
+                        await addItem('infoText', '숫자 야구 게임을 시작합니다~!');
+                        await addItem('suggestNum', '숫자 입력: ');
+                    }
+                }
+            };
+            updateItems();
+            return () => {
+                // 화면이 포커스를 잃을 때 실행할 코드를 여기 작성하십시오.
+                // 예를 들어, 리소스를 정리(clean-up)하는 등의 작업을 수행할 수 있습니다.
+            };
+        }, [route.params])
+    );
+    
+    const todoItem = route.params?.item;
+    useEffect(() => { // 화면 그린 후 랜더링 작업 완료된 후 비동기적으로 실행
+        if (info[0].title != null) {
             const backAction = () => {
                 console.log('Back button pressed');
                 goToHomeTodo(info[0]);
@@ -90,47 +171,71 @@ function Game({ navigation }) {
     }, [info]);
 
     const goToHomeTodo = (gameData) => {
-        console.log('Sending game data to HomeTodo:', gameData);
-        navigation.navigate('Home', { gameData });
+        if(todoItem !== undefined){
+            console.log(todoItem);
+            setInfo(prevInfo => {
+                return prevInfo.map(item => {
+                    return {
+                        ...item,
+                        title: prevInfo.title,
+                        state: 'notDone',
+                    };
+                });
+            });
+            navigation.navigate('Home', { todoItem });
+        }else{
+            console.log(gameData);
+            setInfo(prevInfo => {
+                return prevInfo.map(item => {
+                    return {
+                        ...item,
+                        title: prevInfo.title,
+                        state: 'notDone',
+                    };
+                });
+            });
+            navigation.navigate('Home', { gameData });
+        }
+    
     };
 
     // listItem을 rendering 하는 함수
     const renderItem = ({ item }) => {
-        switch(item.type){
+        switch (item.type) {
             case 'infoText':
-                return <StartView text={item.text}/>
+                return <StartView text={item.text} />
             case 'inputTitle':
-                return <InputTitleView 
-                    text={item.text} 
+                return <InputTitleView
+                    text={item.text}
                     navigation={navigation}
                     addItem={addItem}
                     setInfo={setInfo}
-                    info={info}
-                    />
+                />
             case 'suggestNum':
                 return <SuggestNumView
-                    text={item.text} 
+                    text={item.text}
                     addItem={addItem}
                     addItemResult={addItemResult}
                     answer={info[0].randomNumber}
-                    />
+                    setInfo={setInfo}
+                />
             case 'error':
                 return <ErrorView
                     text={item.text}
                     addItem={addItem}
-                    />
+                />
             case 'result':
                 return <ResultView
                     addItem={addItem}
                     isNothing={item.isNothing}
                     ball={item.ball}
                     strike={item.strike}
-                    />
+                />
             case 'goGameControl':
                 return <GoGameControlView
-                        text={item.text}
-                        addItem={addItem}
-                    />
+                    text={item.text}
+                    addItem={addItem}
+                />
             case 'gameControl':
                 return <GameControlView
                     text={item.text}
@@ -138,22 +243,23 @@ function Game({ navigation }) {
                     setInfo={setInfo}
                     info={info[0]}
                     navigation={navigation}
-                    />
+                />
             default:
                 return null;
         }
     }
-    
+
     return (
         <ThemeProvider theme={theme}>
             <Container>
                 <KeyboardAwareScrollView>
-                    <List contentContainerStyle={{ 
-                        justifyContent: 'flex-start', }}
+                    <List contentContainerStyle={{
+                        justifyContent: 'flex-start',
+                    }}
                         keyboardShouldPersistTaps="always"
-                        width={width} data={listItem} 
+                        width={width} data={listItem}
                         // 각 아이템을 어떻게 렌더링할지 정의
-                        renderItem= {renderItem}
+                        renderItem={renderItem}
                         // 각 아이템의 고유한 키 값을 정의
                         keyExtractor={(item, index) => index.toString()}                  >
                     </List>
