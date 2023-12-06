@@ -85,15 +85,25 @@ export default function HomeTodo({ navigation, route }) {
   const [newTask, setNewTask] = useState('');
   const [tasks, setTasks] = useState([]);
 
+  // async 스토리지 전체 데이터 삭제 함수
+  const clearAllData = async () => {
+    try {
+      await AsyncStorage.clear();
+      console.log('모든 데이터가 삭제되었습니다.');
+    } catch (error) {
+      console.error('데이터 삭제 오류:', error);
+    }
+  };
 
   useEffect(() => {
+    // clearAllData();
     const gameData = route.params?.gameData;
     const todoItem = route.params?.todoItem;
     
     if (todoItem !== undefined) {      
         // 투두롤 클릭해 이동했을 경우에는 마지막에 todo 수정
         console.log('Received game data:', gameData);
-        // _updateTask(todoItem);
+        _updateTask(todoItem);
       }else{
         _addTask(gameData);
       }
@@ -107,10 +117,7 @@ export default function HomeTodo({ navigation, route }) {
     } catch (e) {
       console.error(e);
     }
-  };
-
-  
-    
+  };  
 
   const _loadTasks = async () => {
     try {
@@ -123,18 +130,6 @@ export default function HomeTodo({ navigation, route }) {
     }
   };
 
-  // const _addTask = (gameData) => {
-  //   const ID = Date.now().toString();
-  //   const newTaskObject = {
-  //     [ID]: { 
-  //       id: ID, 
-  //       text: gameData.title,   // 예: 게임 제목 또는 설명
-  //       completed: gameData.completed,  // 예: 게임 완료 상태
-  //     },
-  //   };
-  //   _saveTasks([ ...tasks, ...newTaskObject ]);
-  //   console.log([...tasks, ...newTaskObject ]);
-  // };
   const _addTask = (gameData) => {
 
     if (gameData && Object.keys(gameData).length > 0) {  // gameData가 존재하고, 객체의 속성 개수가 0보다 큰지 확인
@@ -150,7 +145,7 @@ export default function HomeTodo({ navigation, route }) {
       _saveTasks({ ...tasks, ...newTaskObject });
     } else {
       // tasks가 배열이 아닌 경우에는 새 배열을 생성합니다.
-      _saveTasks([newTaskObject]);
+      //_saveTasks([newTaskObject]);
     }
   };
 
@@ -176,34 +171,16 @@ export default function HomeTodo({ navigation, route }) {
     _saveTasks(currentTasks);
   };
 
-  // [도연] async 스토리지 데이터 체크용
-  const loadStoredData = async () => {
-    try {
-      const storedData = await AsyncStorage.getItem('tasks');
-      if (storedData !== null) {
-        // console.log(JSON.parse(storedData));
-      } else {
-        console.log('No data found');
-      }
-    } catch (error) {
-      console.error('Error retrieving data', error);
-    }
-  };
-
   //카테고리 선택 핸들러
   const handleCategorySelect = (selectedCategory) => {
-  const tasksFilteredByCategory = Array.isArray(tasks) ? tasks.filter(task =>
-    selectedCategory === 'solved' ? task.completed : !task.completed
-  ) : [];
-
-  setCategoryData({
-    title: selectedCategory === 'solved' ? 'Solved' : 'Not Solved',
-    color: selectedCategory === 'solved' ? '#61DEA4' : '#EBEFF5',
-    tasks: tasksFilteredByCategory
-  });
-
-  setIsModalVisible(true);
-};
+    const tasksFilteredByCategory = Array.isArray(tasks) ? tasks.filter(task =>
+      selectedCategory === 'solved' ? (task.completed == 'done') : (task.completed == 'notDone')) : [];
+    setCategoryData({
+      color: selectedCategory === 'done' ? '#61DEA4' : '#EBEFF5',
+      tasks: tasksFilteredByCategory
+    });
+    setIsModalVisible(true);
+  };
 
   return isReady ? (
     <ThemeProvider theme={theme}>
@@ -226,9 +203,6 @@ export default function HomeTodo({ navigation, route }) {
           </TouchableOpacity>
 
         </Header>
-
-        <Button title="Load Stored Data" onPress={loadStoredData} />{/*스토리지 체크용*/}
-        <Button title="Delete Stored Data" onPress={clearAllData} />
 
         <CategoryArea>
           <CategoryText
@@ -263,23 +237,10 @@ export default function HomeTodo({ navigation, route }) {
               opacity="0.5"
               weight="400"
             >
-              2 task
+              0 task
             </CategoryText>
           </TouchableOpacity>
 
-          </CategoryBox>
-          <CategoryBox bgColor="#F45E6D">
-            <TouchableOpacity onPress={() => console.log('카테고리 3선택됨')}>
-              <CategoryText textColor="#fff">Don’t want Game</CategoryText>
-              <CategoryText
-                textColor="#fff"
-                size="14px;"
-                opacity="0.5"
-                weight="400"
-              >
-                3 task
-              </CategoryText>
-            </TouchableOpacity>
           </CategoryBox>
         </CategoryArea>
 

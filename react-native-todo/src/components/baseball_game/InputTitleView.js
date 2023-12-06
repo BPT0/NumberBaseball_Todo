@@ -50,7 +50,6 @@ const InputTitleView = ({ text, navigation, addItem, setInfo}) => {
       <Input autoFocus={true} 
         placeholder='제목'
         value={inputText}
-        maxLength={10}
         editable={isEditable} 
         onSubmitEditing={handleSubmitEditing}
         onChangeText={setInputText}

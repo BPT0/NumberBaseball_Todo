@@ -169,9 +169,9 @@ function Game({ navigation, route }) {
                 'hardwareBackPress',
                 backAction
             );
-
             return () => backHandler.remove();
-        }, [info]); // 의존성 배열에 info 추가
+        }
+    }, [info]); // 의존성 배열에 info 추가
 
 
     const goToHomeTodo = (gameData) => {

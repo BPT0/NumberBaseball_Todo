@@ -54,8 +54,8 @@ const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
     };
 
     useEffect(()=> {
-        if(info.state == 'done')
-            goToHomeTodo(info);
+        if(info[0].state == 'done')
+            goToHomeTodo(info[0]);
     }, [info])
 
     const handleSubmitEditing = () => {
