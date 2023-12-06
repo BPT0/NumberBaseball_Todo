@@ -62,7 +62,6 @@ const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
         if (inputNum) {
             setIsEditable(false);
             if (inputNum == '1') {
-                // 게임 재시작 기능 구현
                 setInfo(prevInfo => {
                     return prevInfo.map(item => {
                         return {

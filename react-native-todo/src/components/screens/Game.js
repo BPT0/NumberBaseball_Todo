@@ -116,7 +116,7 @@ function Game({ navigation, route }) {
         });
     }, [navigation, info]);
 
-    useFocusEffect( // navigationo으로 화면 1번 이동시 실행되는 후크
+    useFocusEffect( // navigationo으로 화면 이동시 1번 실행되는 후크
         React.useCallback(() => {
             const updateItems = async () => {
                 const todoItem = route.params?.item;
@@ -157,7 +157,11 @@ function Game({ navigation, route }) {
         if (info[0].title != null) {
             const backAction = () => {
                 console.log('Back button pressed');
-                goToHomeTodo(info[0]);
+                const gameData = {
+                    title: info[0].title, // 상태에서 제목 가져오기
+                    completed: false,
+                };
+                goToHomeTodo(gameData);
                 return true; // 이벤트를 여기서 종료
             };
 
@@ -167,8 +171,8 @@ function Game({ navigation, route }) {
             );
 
             return () => backHandler.remove();
-        }
-    }, [info]);
+        }, [info]); // 의존성 배열에 info 추가
+
 
     const goToHomeTodo = (gameData) => {
         if(todoItem !== undefined){
@@ -241,7 +245,7 @@ function Game({ navigation, route }) {
                     text={item.text}
                     addItem={addItem}
                     setInfo={setInfo}
-                    info={info[0]}
+                    info={info}
                     navigation={navigation}
                 />
             default:

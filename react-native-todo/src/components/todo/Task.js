@@ -56,6 +56,7 @@ const Task = ({ item, deleteTask, toggleTask, navigation }) => {
         id={item.id}
         completed={item.completed}
       />
+
       <Contents onPress={_goGameScreen}>
         <ContentsText>
           {item.text} {/*게임 타이틀 값*/}
