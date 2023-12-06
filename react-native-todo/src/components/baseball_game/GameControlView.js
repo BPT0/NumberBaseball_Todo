@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components/native';
 import PropTypes from 'prop-types';
 import Input from '../base_component/Input';
+import { ProgressBarAndroidComponent } from 'react-native';
 
 const Container = styled.View`
     flex-direction: row;
@@ -47,14 +48,15 @@ const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
         setInputNum(truncatedValue); // 입력값 업데이트
     };
 
-    const getType = (value) => {
-        return typeof value;
-    };
-
-    const goToHomeTodo = (gameData) => {
+    const goToHomeTodo = (gameData) => {        
         console.log('Sending game data to HomeTodo:', gameData);
         navigation.navigate('Home', { gameData });
     };
+
+    useEffect(()=> {
+        if(info.state == 'done')
+            goToHomeTodo(info);
+    }, [info])
 
     const handleSubmitEditing = () => {
         if (inputNum) {
@@ -64,7 +66,7 @@ const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
                 setInfo(prevInfo => {
                     return prevInfo.map(item => {
                         return {
-                            title: prevInfo.title,
+                            ...item,
                             state: 'notDone',
                             randomNumber: getRandomNumber().toString(),
                         };
@@ -72,8 +74,14 @@ const GameControlView = ({ text, addItem, setInfo, info, navigation }) => {
                 });
                 addItem('suggestNum', '숫자입력:');
             } else if (inputNum == '2') {
-                console.log(info);
-                goToHomeTodo(info);
+                setInfo(prevInfo => {
+                    return prevInfo.map(item => {
+                        return {
+                            ...item,
+                            state: 'done',
+                        };
+                    });
+                });
             }
         }
     };
@@ -98,6 +106,8 @@ GameControlView.propTypes = {
     text: PropTypes.string.isRequired,
     addItem: PropTypes.func.isRequired,
     setInfo: PropTypes.func.isRequired,
+    info: PropTypes.object.isRequired,
+    navigation: PropTypes.object.isRequired,
 };
 
 export default GameControlView;

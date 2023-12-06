@@ -77,11 +77,16 @@ export default function HomeTodo({ navigation, route }) {
 
   useEffect(() => {
     const gameData = route.params?.gameData;
-
-    if (gameData) {
-      console.log('Received game data:', gameData);
-      _addTask(gameData);
-    }
+    const todoItem = route.params?.todoItem;
+    
+    if (todoItem !== undefined) {      
+        // 투두롤 클릭해 이동했을 경우에는 마지막에 todo 수정
+        console.log('Received game data:', gameData);
+        // _updateTask(todoItem);
+      }else{
+        _addTask(gameData);
+      }
+    
   }, [route.params]);
 
   const _saveTasks = async tasks => {
@@ -102,7 +107,6 @@ export default function HomeTodo({ navigation, route }) {
       const ID = Date.now().toString();
       const newTaskObject = {
         [ID]: {
-          id: ID,
           text: gameData.title,       // 게임 제목 
           completed: gameData.state,  // 게임 완료 상태
           randomNumber: gameData.randomNumber, // 게임 설정 숫자값
@@ -119,23 +123,21 @@ export default function HomeTodo({ navigation, route }) {
     delete currentTasks[id];
     _saveTasks(currentTasks);
   };
+
   const _toggleTask = id => {
     const currentTasks = Object.assign({}, tasks);
-    currentTasks[id]['completed'] = !currentTasks[id]['completed'];
+    if(currentTasks[id]['completed'] == 'done'){
+      currentTasks[id]['completed'] = 'notDone';
+    }else{
+      currentTasks[id]['completed'] = 'done';
+    }
     _saveTasks(currentTasks);
   };
-  const _updateTask = item => {
+  const _updateTask = gameData => {
     const currentTasks = Object.assign({}, tasks);
-    currentTasks[item.id] = item;
+    console.log(currentTasks, 'update');
+    currentTasks[gameData.id] = gameData[0];
     _saveTasks(currentTasks);
-  };
-
-  const _handleTextChange = text => {
-    setNewTask(text);
-  };
-
-  const _onBlur = () => {
-    setNewTask('');
   };
 
   // [도연] async 스토리지 데이터 체크용
@@ -249,7 +251,6 @@ export default function HomeTodo({ navigation, route }) {
                 item={item}
                 deleteTask={_deleteTask}
                 toggleTask={_toggleTask}
-                updateTask={_updateTask}
                 navigation={navigation}
               />
             ))}

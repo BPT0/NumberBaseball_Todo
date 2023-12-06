@@ -20,16 +20,13 @@ const Contents = styled.TouchableOpacity`
 `;
 
 const ContentsText = styled.Text`
-  flex: 1;
   font-size: 24px;
-  color: ${({ theme, completed }) => (completed ? theme.done : theme.text)};
   text-decoration-line: ${({ completed }) =>
     completed ? 'line-through' : 'none'};
 `;
 
-const getStatusColor = (status) => {
-  const color = status === 'done' ? '#61DEA4' : '#979797';
-  console.log(`Status: ${status}, Color: ${color}`);
+const getStatusColor = (completed) => {
+  const color = completed === "done" ? '#61DEA4' : '#979797';
   return color;
 };
 
@@ -40,46 +37,28 @@ const StatusIcon = styled.View`
   background-color: ${({ status }) => getStatusColor(status)};
 `;
 
-const Task = ({ item, deleteTask, toggleTask, updateTask, navigation }) => {
-  const [isEditing, setIsEditing] = useState(false);
+const Task = ({ item, deleteTask, toggleTask, navigation }) => {
   const [text, setText] = useState(item.text);
 
-  const _onSubmitEditing = () => {
-    if (isEditing) {
-      const editedTask = Object.assign({}, item, { text });
-      setIsEditing(false);
-      updateTask(editedTask);
-    }
-  };
-  const _onBlur = () => {
-    if (isEditing) {
-      setIsEditing(false);
-      setText(item.text);
-    }
-  };
+  useEffect(() => {
+    console.log(item);
+  }, [item]);
 
   const _goGameScreen = () => {
     // todo. 3. 데이터와 todo의 id(식별값)를 가지고 게임화면으로 이동
     navigation.navigate('Game', {item});
   }
 
-  return isEditing ? (
-    <Input
-      value={text}
-      onChangeText={text => setText(text)}
-      onSubmitEditing={_onSubmitEditing}
-      onBlur={_onBlur}
-    />
-  ) : (
+  return (
     <Container>
       <IconButton
-        type={item.completed ? images.completed : images.uncompleted}
+        type={item.completed === "done" ? images.completed : images.uncompleted}
         id={item.id}
         onPressOut={toggleTask}
         completed={item.completed}
       />
       <Contents onPress={_goGameScreen}>
-        <ContentsText completed={item.completed}>
+        <ContentsText>
           {item.text} {/*게임 타이틀 값*/}
         </ContentsText>
       </Contents>

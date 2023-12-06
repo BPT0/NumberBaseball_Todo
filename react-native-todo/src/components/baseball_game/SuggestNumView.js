@@ -20,7 +20,7 @@ const Contents = styled.Text`
     color: ${({ theme }) => theme.textBlack};
 `;
 
-const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
+const SuggestNumView = ({ text, addItem, addItemResult, answer, setInfo }) => {
     // textInput editable 상태 관리 변수
     const [isEditable, setIsEditable] = useState(true);
     // textInput의 입력값의 상태 관리 변수
@@ -33,6 +33,7 @@ const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
     };
 
     const handleSubmitEditing = () => {
+        console.log(answer);
         setIsEditable(false);
         if (inputNum.length < 3) {
             addItem('error', '적절하지 않은 입력값입니다.\n올바른 값을 다시 입력해주세요.',);
@@ -44,16 +45,6 @@ const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
             } else {
                 if (inputNum == answer) {
                     addItem('goGameControl', '3스트라이크!!\n3개의 숫자를 모두 맞히셨습니다.',);
-                    setInfo(prevInfo => {
-                        // 이전 상태(prevInfo)를 기반으로 새로운 상태를 반환
-                        return prevInfo.map(item => {
-                            // 각 아이템의 title을 수정
-                            return {
-                                ...item, // 기존 아이템의 다른 속성들은 그대로 유지
-                                state: 'done', // 새로운 title 값으로 업데이트
-                            };
-                        });
-                    });
                 } else {
                     let ball = 0;
                     for (let i = 0; i < inputNum.length; i++) {
@@ -65,14 +56,12 @@ const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
                             }
                         }
                     }
-                    console.log(ball.toString());
 
                     let strike = 0;
                     for (let i = 0; i < inputNum.length; i++) {
                         if (inputNum[i] == answer[i])
                             strike++;
                     }
-                    console.log(strike.toString());
 
                     let isNothing = false;
                     if (strike == 0 && ball == 0) {
@@ -104,7 +93,9 @@ const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
 SuggestNumView.propTypes = {
     text: PropTypes.string.isRequired,
     addItem: PropTypes.func.isRequired,
+    addItemResult: PropTypes.func.isRequired,
     answer: PropTypes.string.isRequired,
+    setInfo: PropTypes.func.isRequired,
 };
 
 export default SuggestNumView;
