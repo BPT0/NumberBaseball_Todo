@@ -1,3 +1,4 @@
+// global import
 import React, { useEffect, useState } from 'react';
 import {
   StatusBar,
@@ -5,18 +6,18 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Image,
+  Button,
 } from 'react-native';
-import styled, { ThemeProvider } from 'styled-components/native';
-import { theme } from '../../theme';
-import Input from '../base_component/Input';
-import Task from '../todo/Task';
 import AppLoading from 'expo-app-loading';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FloatButton from '../todo/component/FloatButton';
-import { images } from '../todo/images/images';
+import styled, { ThemeProvider } from 'styled-components/native';
 import CategoryModal from './CategoryModal';
-
-import { Button } from 'react-native'; // 스토리지 체크용 Button 컴포넌트 추가
+// local import
+import { theme } from '../../theme';
+import Input from '../base_component/Input';
+import Task from '../todo/Task';
+import { images } from '../todo/images/images';
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -74,7 +75,7 @@ const List = styled.ScrollView`
   width: ${({ width }) => width - 40}px;
 `;
 
-export default function HomeTodo({navigation, route}) {
+export default function HomeTodo({ navigation, route }) {
   const width = Dimensions.get('window').width;
   const [selectedCategory, setSelectedCategory] = useState(null); // 카테고리 필터링을 위한 상태
   const [isModalVisible, setIsModalVisible] = useState(false); // 모달창 상태관리
@@ -83,6 +84,21 @@ export default function HomeTodo({navigation, route}) {
   const [isReady, setIsReady] = useState(false);
   const [newTask, setNewTask] = useState('');
   const [tasks, setTasks] = useState([]);
+
+
+  useEffect(() => {
+    const gameData = route.params?.gameData;
+    const todoItem = route.params?.todoItem;
+    
+    if (todoItem !== undefined) {      
+        // 투두롤 클릭해 이동했을 경우에는 마지막에 todo 수정
+        console.log('Received game data:', gameData);
+        // _updateTask(todoItem);
+      }else{
+        _addTask(gameData);
+      }
+    
+  }, [route.params]);
 
   const _saveTasks = async tasks => {
     try {
@@ -120,60 +136,59 @@ export default function HomeTodo({navigation, route}) {
   //   console.log([...tasks, ...newTaskObject ]);
   // };
   const _addTask = (gameData) => {
-    const ID = Date.now().toString();
-    const newTaskObject = {
-      id: ID,
-      text: gameData.title, // 예: 게임 제목 또는 설명
-      completed: gameData.completed, // 예: 게임 완료 상태
-    };
-  
-    if (Array.isArray(tasks)) {
-      // tasks가 배열인 경우에만 새로운 태스크를 추가합니다.
-      _saveTasks([...tasks, newTaskObject]);
+
+    if (gameData && Object.keys(gameData).length > 0) {  // gameData가 존재하고, 객체의 속성 개수가 0보다 큰지 확인
+      const ID = Date.now().toString();
+      const newTaskObject = {
+        [ID]: {
+          id: ID,
+          text: gameData.title,       // 게임 제목 
+          completed: gameData.state,  // 게임 완료 상태
+          randomNumber: gameData.randomNumber, // 게임 설정 숫자값
+        },
+      };
+      _saveTasks({ ...tasks, ...newTaskObject });
     } else {
       // tasks가 배열이 아닌 경우에는 새 배열을 생성합니다.
       _saveTasks([newTaskObject]);
     }
   };
-  
-  useEffect(() => {
-    const gameData = route.params?.gameData;
-    
-    if (gameData) {
-      console.log('Received game data:', gameData);
-      _addTask(gameData);
-    }
-  }, [route.params]);
 
   const _deleteTask = id => {
     const currentTasks = Object.assign({}, tasks);
     delete currentTasks[id];
     _saveTasks(currentTasks);
   };
+
   const _toggleTask = id => {
     const currentTasks = Object.assign({}, tasks);
-    currentTasks[id]['completed'] = !currentTasks[id]['completed'];
+    if(currentTasks[id]['completed'] == 'done'){
+      currentTasks[id]['completed'] = 'notDone';
+    }else{
+      currentTasks[id]['completed'] = 'done';
+    }
     _saveTasks(currentTasks);
   };
-  const _updateTask = item => {
+  const _updateTask = gameData => {
     const currentTasks = Object.assign({}, tasks);
-    currentTasks[item.id] = item;
+    console.log(currentTasks, 'update');
+    currentTasks[gameData.id] = gameData[0];
     _saveTasks(currentTasks);
   };
 
-  const _handleTextChange = text => {
-    setNewTask(text);
+  // [도연] async 스토리지 데이터 체크용
+  const loadStoredData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem('tasks');
+      if (storedData !== null) {
+        // console.log(JSON.parse(storedData));
+      } else {
+        console.log('No data found');
+      }
+    } catch (error) {
+      console.error('Error retrieving data', error);
+    }
   };
-
-  const _onBlur = () => {
-    setNewTask('');
-  };
-
-  const _goGameScreen = () => {
-
-  }
-
-
 
   //카테고리 선택 핸들러
   const handleCategorySelect = (selectedCategory) => {
@@ -189,42 +204,6 @@ export default function HomeTodo({navigation, route}) {
 
   setIsModalVisible(true);
 };
-
-  
-  // //카테고리에 따른 Task 필터링
-  // const filteredTasks = selectedCategory === 'solved' 
-  // ? Object.values(tasks).filter(task => task.completed)
-  // : selectedCategory === 'notSolved'
-  // ? Object.values(tasks).filter(task => !task.completed)
-  // : Object.values(tasks); // 기본값은 모든 Task 표시
-
-  
-
-// [도연] async 스토리지 데이터 체크용
-const loadStoredData = async () => {
-  try {
-    const storedData = await AsyncStorage.getItem('tasks');
-    if (storedData !== null) {
-      // console.log(JSON.parse(storedData));
-    } else {
-      console.log('No data found');
-    }
-  } catch (error) {
-    console.error('Error retrieving data', error);
-  }
-};
-
-// async 스토리지 전체 데이터 삭제 함수
-const clearAllData = async () => {
-  try {
-    await AsyncStorage.clear();
-    console.log('모든 데이터가 삭제되었습니다.');
-  } catch (error) {
-    console.error('데이터 삭제 오류:', error);
-  }
-};
-
-
 
   return isReady ? (
     <ThemeProvider theme={theme}>
@@ -245,6 +224,7 @@ const clearAllData = async () => {
           />
             <Title>Play NumberbaseBall~!</Title>
           </TouchableOpacity>
+
         </Header>
 
         <Button title="Load Stored Data" onPress={loadStoredData} />{/*스토리지 체크용*/}
@@ -263,6 +243,7 @@ const clearAllData = async () => {
             <CategoryBox bgColor="#EBEFF5">
             <TouchableOpacity onPress={() => handleCategorySelect('notSolved')}>
             <CategoryText>Not Solved</CategoryText>
+
               <CategoryText
                 textColor="#252A31"
                 size="14px;"
@@ -272,7 +253,7 @@ const clearAllData = async () => {
                 0 task
               </CategoryText>
             </TouchableOpacity>
-            </CategoryBox>
+          </CategoryBox>
           <CategoryBox bgColor="#61DEA4">
           <TouchableOpacity onPress={() => handleCategorySelect('solved')}>
           <CategoryText textColor="#fff">Solved</CategoryText>
@@ -285,19 +266,20 @@ const clearAllData = async () => {
               2 task
             </CategoryText>
           </TouchableOpacity>
+
           </CategoryBox>
           <CategoryBox bgColor="#F45E6D">
-          <TouchableOpacity onPress={() => console.log('카테고리 3선택됨')}>
-          <CategoryText textColor="#fff">Don’t want Game</CategoryText>
-            <CategoryText
-              textColor="#fff"
-              size="14px;"
-              opacity="0.5"
-              weight="400"
-            >
-              3 task
-            </CategoryText>          
-          </TouchableOpacity>
+            <TouchableOpacity onPress={() => console.log('카테고리 3선택됨')}>
+              <CategoryText textColor="#fff">Don’t want Game</CategoryText>
+              <CategoryText
+                textColor="#fff"
+                size="14px;"
+                opacity="0.5"
+                weight="400"
+              >
+                3 task
+              </CategoryText>
+            </TouchableOpacity>
           </CategoryBox>
         </CategoryArea>
 
@@ -319,7 +301,7 @@ const clearAllData = async () => {
                 item={item}
                 deleteTask={_deleteTask}
                 toggleTask={_toggleTask}
-                updateTask={_updateTask}
+                navigation={navigation}
               />
             ))}
         </List>
