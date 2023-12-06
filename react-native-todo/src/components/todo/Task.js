@@ -46,7 +46,7 @@ const Task = ({ item, deleteTask, toggleTask, navigation }) => {
 
   const _goGameScreen = () => {
     // todo. 3. 데이터와 todo의 id(식별값)를 가지고 게임화면으로 이동
-    navigation.navigate('Game', {item});
+    // navigation.navigate('Game', {item});
   }
 
   return (
@@ -54,7 +54,6 @@ const Task = ({ item, deleteTask, toggleTask, navigation }) => {
       <IconButton
         type={item.completed === "done" ? images.completed : images.uncompleted}
         id={item.id}
-        onPressOut={toggleTask}
         completed={item.completed}
       />
       <Contents onPress={_goGameScreen}>
