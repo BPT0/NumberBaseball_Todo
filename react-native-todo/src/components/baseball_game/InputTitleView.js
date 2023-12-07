@@ -53,6 +53,7 @@ const InputTitleView = ({ text, navigation, addItem, setInfo}) => {
         editable={isEditable} 
         onSubmitEditing={handleSubmitEditing}
         onChangeText={setInputText}
+        maxLength={20}
       />
     </Container>
   );

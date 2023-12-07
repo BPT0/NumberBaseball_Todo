@@ -80,7 +80,7 @@ export default function HomeTodo({ navigation, route }) {
   const [selectedCategory, setSelectedCategory] = useState(null); // 카테고리 필터링을 위한 상태
   const [isModalVisible, setIsModalVisible] = useState(false); // 모달창 상태관리
   const [categoryData, setCategoryData] = useState({ tasks: [] });
-  
+
   const [isReady, setIsReady] = useState(false);
   const [newTask, setNewTask] = useState('');
   const [tasks, setTasks] = useState([]);
@@ -99,15 +99,15 @@ export default function HomeTodo({ navigation, route }) {
     // clearAllData();
     const gameData = route.params?.gameData;
     const todoItem = route.params?.todoItem;
-    
-    if (todoItem !== undefined) {      
-        // 투두롤 클릭해 이동했을 경우에는 마지막에 todo 수정
-        console.log('Received game data:', gameData);
-        _updateTask(todoItem);
-      }else{
-        _addTask(gameData);
-      }
-    
+
+    if (todoItem !== undefined) {
+      // 투두롤 클릭해 이동했을 경우에는 마지막에 todo 수정
+      console.log('Received game data:', gameData);
+      _updateTask(todoItem);
+    } else {
+      _addTask(gameData);
+    }
+
   }, [route.params]);
 
   const _saveTasks = async tasks => {
@@ -117,7 +117,7 @@ export default function HomeTodo({ navigation, route }) {
     } catch (e) {
       console.error(e);
     }
-  };  
+  };
 
   const _loadTasks = async () => {
     try {
@@ -157,9 +157,9 @@ export default function HomeTodo({ navigation, route }) {
 
   const _toggleTask = id => {
     const currentTasks = Object.assign({}, tasks);
-    if(currentTasks[id]['completed'] == 'done'){
+    if (currentTasks[id]['completed'] == 'done') {
       currentTasks[id]['completed'] = 'notDone';
-    }else{
+    } else {
       currentTasks[id]['completed'] = 'done';
     }
     _saveTasks(currentTasks);
@@ -173,12 +173,18 @@ export default function HomeTodo({ navigation, route }) {
 
   //카테고리 선택 핸들러
   const handleCategorySelect = (selectedCategory) => {
-    const tasksFilteredByCategory = Array.isArray(tasks) ? tasks.filter(task =>
-      selectedCategory === 'solved' ? (task.completed == 'done') : (task.completed == 'notDone')) : [];
+    console.log(selectedCategory, '함수내부\n', categoryData);
+    setSelectedCategory(selectedCategory);
+    const tasksFilteredByCategory = Object.values(tasks).filter(task =>
+        selectedCategory === 'solved' ? (task.completed === "done") : (task.completed == "notDone")
+    );
+    
     setCategoryData({
-      color: selectedCategory === 'done' ? '#61DEA4' : '#EBEFF5',
+      title: selectedCategory === 'solved' ? 'Solved' : 'Not Solved',
+      color: selectedCategory === 'solved' ? '#61DEA4' : '#EBEFF5',
       tasks: tasksFilteredByCategory
     });
+
     setIsModalVisible(true);
   };
 
@@ -191,14 +197,14 @@ export default function HomeTodo({ navigation, route }) {
         />
 
         <Header>
-          <TouchableOpacity 
-          onPress={() => navigation.navigate('Game')}
-          style={{ flexDirection: 'row', alignItems: 'center' }}
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Game')}
+            style={{ flexDirection: 'row', alignItems: 'center' }}
           >
-          <Image 
-          source={images.Plus} 
-          style={{ width: 20, height: 20, marginLeft: 45}} 
-          />
+            <Image
+              source={images.Plus}
+              style={{ width: 20, height: 20, marginLeft: 45 }}
+            />
             <Title>Play NumberbaseBall~!</Title>
           </TouchableOpacity>
 
@@ -214,9 +220,9 @@ export default function HomeTodo({ navigation, route }) {
           >
             Category
           </CategoryText>
-            <CategoryBox bgColor="#EBEFF5">
+          <CategoryBox bgColor="#EBEFF5">
             <TouchableOpacity onPress={() => handleCategorySelect('notSolved')}>
-            <CategoryText>Not Solved</CategoryText>
+              <CategoryText>Not Solved</CategoryText>
 
               <CategoryText
                 textColor="#252A31"
@@ -229,17 +235,17 @@ export default function HomeTodo({ navigation, route }) {
             </TouchableOpacity>
           </CategoryBox>
           <CategoryBox bgColor="#61DEA4">
-          <TouchableOpacity onPress={() => handleCategorySelect('solved')}>
-          <CategoryText textColor="#fff">Solved</CategoryText>
-            <CategoryText
-              textColor="#fff"
-              size="14px;"
-              opacity="0.5"
-              weight="400"
-            >
-              0 task
-            </CategoryText>
-          </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleCategorySelect('solved')}>
+              <CategoryText textColor="#fff">Solved</CategoryText>
+              <CategoryText
+                textColor="#fff"
+                size="14px;"
+                opacity="0.5"
+                weight="400"
+              >
+                0 task
+              </CategoryText>
+            </TouchableOpacity>
 
           </CategoryBox>
         </CategoryArea>
@@ -251,7 +257,6 @@ export default function HomeTodo({ navigation, route }) {
           color={selectedCategory === 'notSolved' ? '#EBEFF5' : '#61DEA4'}
           category={categoryData}
         />
-
 
         <List width={width}>
           {Object.values(tasks)
