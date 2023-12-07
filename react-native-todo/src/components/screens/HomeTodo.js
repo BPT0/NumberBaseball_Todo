@@ -80,6 +80,8 @@ export default function HomeTodo({ navigation, route }) {
   const [selectedCategory, setSelectedCategory] = useState(null); // 카테고리 필터링을 위한 상태
   const [isModalVisible, setIsModalVisible] = useState(false); // 모달창 상태관리
   const [categoryData, setCategoryData] = useState({ tasks: [] });
+  const [doneFilteredTasksSize, setDoneFilteredTasksSize] = useState(0); // done list 개수 상태관리
+  const [notDoneFilteredTasksSize, setNotDoneFilteredTasksSize] = useState(0); // notDone list 개수 상태관리
 
   const [isReady, setIsReady] = useState(false);
   const [newTask, setNewTask] = useState('');
@@ -173,11 +175,18 @@ export default function HomeTodo({ navigation, route }) {
 
   //카테고리 선택 핸들러
   const handleCategorySelect = (selectedCategory) => {
-    console.log(selectedCategory, '함수내부\n', categoryData);
+    // tasksFilteredByCategory 의 size가 변할때마다 모델 창 외부에 표시되는 텍스트에 보여 주기
     setSelectedCategory(selectedCategory);
+    
     const tasksFilteredByCategory = Object.values(tasks).filter(task =>
         selectedCategory === 'solved' ? (task.completed === "done") : (task.completed == "notDone")
     );
+    
+    if(selectedCategory === 'solved'){
+      setDoneFilteredTasksSize(tasksFilteredByCategory.length);
+    }else if(selectedCategory === 'notSolved'){
+      setNotDoneFilteredTasksSize(tasksFilteredByCategory.length);
+    }
     
     setCategoryData({
       title: selectedCategory === 'solved' ? 'Solved' : 'Not Solved',
@@ -205,7 +214,7 @@ export default function HomeTodo({ navigation, route }) {
               source={images.Plus}
               style={{ width: 20, height: 20, marginLeft: 45 }}
             />
-            <Title>Play NumberbaseBall~!</Title>
+            <Title>Play NumberBaseBall~!</Title>
           </TouchableOpacity>
 
         </Header>
@@ -230,7 +239,7 @@ export default function HomeTodo({ navigation, route }) {
                 opacity="0.5"
                 weight="400"
               >
-                0 task
+                {notDoneFilteredTasksSize} task
               </CategoryText>
             </TouchableOpacity>
           </CategoryBox>
@@ -243,7 +252,7 @@ export default function HomeTodo({ navigation, route }) {
                 opacity="0.5"
                 weight="400"
               >
-                0 task
+                {doneFilteredTasksSize} task
               </CategoryText>
             </TouchableOpacity>
 
