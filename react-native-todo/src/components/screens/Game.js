@@ -116,7 +116,7 @@ function Game({ navigation, route }) {
         });
     }, [navigation, info]);
 
-    useFocusEffect( // navigationo으로 화면 이동시 1번 실행되는 후크
+    useFocusEffect( // navigation으로 화면 이동시 1번 실행되는 후크
         React.useCallback(() => {
             const updateItems = async () => {
                 const todoItem = route.params?.item;
@@ -136,7 +136,7 @@ function Game({ navigation, route }) {
                         await addItem('infoText', '이전 게임에서 정답을 못 맞췄습니다!');
                         await addItem('infoText', '숫자 야구 게임을 시작합니다~!');
                         await addItem('suggestNum', '숫자 입력: ');
-                    }else{
+                    } else {
                         await setInfos(todoItem.text, todoItem.randomNumber);
                         await addItem('infoText', '이전 게임에서 정답을 못 맞췄습니다!');
                         await addItem('infoText', '숫자 야구 게임을 시작합니다~!');
@@ -151,7 +151,7 @@ function Game({ navigation, route }) {
             };
         }, [route.params])
     );
-    
+
     const todoItem = route.params?.item;
     useEffect(() => { // 화면 그린 후 랜더링 작업 완료된 후 비동기적으로 실행
         if (info[0].title != null) {
@@ -175,7 +175,7 @@ function Game({ navigation, route }) {
 
 
     const goToHomeTodo = (gameData) => {
-        if(todoItem !== undefined){
+        if (todoItem !== undefined) {
             console.log(todoItem);
             setInfo(prevInfo => {
                 return prevInfo.map(item => {
@@ -187,7 +187,7 @@ function Game({ navigation, route }) {
                 });
             });
             navigation.navigate('Home', { todoItem });
-        }else{
+        } else {
             console.log(gameData);
             setInfo(prevInfo => {
                 return prevInfo.map(item => {
@@ -200,7 +200,7 @@ function Game({ navigation, route }) {
             });
             navigation.navigate('Home', { gameData });
         }
-    
+
     };
 
     // listItem을 rendering 하는 함수

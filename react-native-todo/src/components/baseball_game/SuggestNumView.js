@@ -20,7 +20,7 @@ const Contents = styled.Text`
     color: ${({ theme }) => theme.textBlack};
 `;
 
-const SuggestNumView = ({ text, addItem, addItemResult, answer, setInfo }) => {
+const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
     // textInput editable 상태 관리 변수
     const [isEditable, setIsEditable] = useState(true);
     // textInput의 입력값의 상태 관리 변수
@@ -95,7 +95,6 @@ SuggestNumView.propTypes = {
     addItem: PropTypes.func.isRequired,
     addItemResult: PropTypes.func.isRequired,
     answer: PropTypes.string.isRequired,
-    setInfo: PropTypes.func.isRequired,
 };
 
 export default SuggestNumView;
