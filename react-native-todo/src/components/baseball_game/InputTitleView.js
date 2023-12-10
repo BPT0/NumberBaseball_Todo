@@ -7,7 +7,7 @@ const Container = styled.View`
   flex-direction: row;
   align-items: center;
   justifyContent: space-between;
-  background-color: ${({ theme }) => theme.itemBackground};
+  background-color: ${({ theme }) => theme.white};
   padding: 5px;
   borderBottomWidth: 1px; 
   borderBottomColor: ${({theme})=> theme.divisionLine}
@@ -54,9 +54,11 @@ const InputTitleView = ({ text, navigation, addItem, setInfo}) => {
         onSubmitEditing={handleSubmitEditing}
         onChangeText={setInputText}
         maxLength={20}
+        multiline={true}
+        textAlign={'right'}
       />
     </Container>
-  );
+  ); 
 };
 
 InputTitleView.propTypes = {

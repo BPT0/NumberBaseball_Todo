@@ -30,7 +30,6 @@ const Input = ({
     <StyledInput
       width={width}
       placeholder={placeholder}
-      maxLength={10}
       autoCapitalize="none"
       autoCorrect={false}
       returnKeyType="done"

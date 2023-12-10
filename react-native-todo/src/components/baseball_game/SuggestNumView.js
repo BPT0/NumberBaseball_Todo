@@ -20,6 +20,20 @@ const Contents = styled.Text`
     color: ${({ theme }) => theme.textBlack};
 `;
 
+const InputNum = styled.TextInput`
+    flex: 2;
+    multiline : true
+    textAlign : left;
+    autoFocus : true
+    placeholder='3자리 숫자를 입력'
+    value : inputNum
+    editable : {isEditable}
+    onSubmitEditing: {handleSubmitEditing}
+    onChangeText: {handleTextChange}
+    keyboardType: "numeric"
+    maxLength : 3
+`;
+
 const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
     // textInput editable 상태 관리 변수
     const [isEditable, setIsEditable] = useState(true);
@@ -77,15 +91,7 @@ const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
     return (
         <Container>
             <Contents>{text}</Contents>
-            <Input autoFocus={true}
-                placeholder='3자리 숫자를 입력'
-                value={inputNum}
-                editable={isEditable}
-                onSubmitEditing={handleSubmitEditing}
-                onChangeText={handleTextChange}
-                keyboardType="numeric"
-                maxLength={3}
-            />
+            <InputNum/>
         </Container>
     );
 };
