@@ -22,19 +22,10 @@ const Contents = styled.Text`
 
 const InputNum = styled.TextInput`
     flex: 2;
-    multiline : true
-    textAlign : left;
-    autoFocus : true
-    placeholder='3자리 숫자를 입력'
-    value : inputNum
-    editable : {isEditable}
-    onSubmitEditing: {handleSubmitEditing}
-    onChangeText: {handleTextChange}
-    keyboardType: "numeric"
-    maxLength : 3
+    font-size: 20px;    
 `;
 
-const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
+const SuggestNumView = ({ text, addItem, addItemResult, answer,}) => {
     // textInput editable 상태 관리 변수
     const [isEditable, setIsEditable] = useState(true);
     // textInput의 입력값의 상태 관리 변수
@@ -91,7 +82,18 @@ const SuggestNumView = ({ text, addItem, addItemResult, answer }) => {
     return (
         <Container>
             <Contents>{text}</Contents>
-            <InputNum/>
+            <Input
+                value={inputNum}
+                editable = {isEditable}
+                onSubmitEditing = {handleSubmitEditing}
+                onChangeText =  {handleTextChange}
+                keyboardType = "numeric"
+                multiline =  {true}
+                textAlign = "left"
+                placeholder='3자리 숫자를 입력'
+                maxLength = {3}
+                autoFocus={true}
+            />
         </Container>
     );
 };
@@ -101,6 +103,7 @@ SuggestNumView.propTypes = {
     addItem: PropTypes.func.isRequired,
     addItemResult: PropTypes.func.isRequired,
     answer: PropTypes.string.isRequired,
+    setInfo: PropTypes.func.isRequired,
 };
 
 export default SuggestNumView;

@@ -25,8 +25,6 @@ const ResultView = ({ addItem, isNothing, ball, strike }) => {
     const [result, setResult] = useState(''); 
 
     useEffect(()=>{
-        handleAddItem();
-
         // if 문을 사용해 결과 문자열 결정
         if (isNothing) {
             setResult('낫싱');
@@ -39,6 +37,7 @@ const ResultView = ({ addItem, isNothing, ball, strike }) => {
                 setResult(`${ball}볼 ${strike}스트라이크`);
             }
         }
+        handleAddItem();
     }, [isNothing, ball, strike]);
 
     const handleAddItem = () => {

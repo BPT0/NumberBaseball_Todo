@@ -10,7 +10,7 @@ const StyledInput = styled.TextInput.attrs(({ theme }) => ({
   flex:1;
   height: 60px;
   marginLeft: 10px;
-  background-color: ${({ theme }) => theme.itemBackground};
+  background-color: ${({ theme }) => theme.white};
   font-size: 20px;
   color: ${({ theme }) => theme.textBlack};
 `;
@@ -22,7 +22,7 @@ const Input = ({
   placeholder,
   onSubmitEditing,
   editable,
-  autoFocus
+  autoFocus,
 }) => {
   const width = Dimensions.get('window').width;
 

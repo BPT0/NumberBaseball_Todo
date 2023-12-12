@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components/native';
 import PropTypes from 'prop-types';
 import Input from '../base_component/Input';
-import { ProgressBarAndroidComponent } from 'react-native';
 
 const Container = styled.View`
     flex-direction: row;
